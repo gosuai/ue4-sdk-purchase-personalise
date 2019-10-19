@@ -19,7 +19,7 @@ public:
 
 	/** Credentials for public release */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GOSU Purchases Settings")
-	FString SecretKeyRelease;
+	FString SecretKeyProduction;
 
 	/** Attn.! Check that it's disabled in release */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadWrite, Category = "GOSU Purchases Settings")

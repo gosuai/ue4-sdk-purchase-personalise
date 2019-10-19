@@ -12,6 +12,8 @@
 #include "Engine.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
+#include "Misc/Base64.h"
+#include "Misc/SecureHash.h"
 #include "Modules/ModuleManager.h"
 #include "Runtime/Launch/Resources/Version.h"
 
@@ -25,6 +27,19 @@ UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& Obj
 void UGosuPurchasesController::Initialize()
 {
 	LoadData();
+
+	const UGosuPurchasesSettings* Settings = FGosuPurchasesModule::Get().GetSettings();
+	if (Settings->bDevelopmentMode)
+	{
+#if UE_BUILD_SHIPPING
+		UE_LOG(LogGosuPurchases, Warning, TEXT("%s: Developmend mode should be disabled in Shipping build"), *VA_FUNC_LINE);
+#endif
+		SecretKey = Settings->SecretKeyDevelopment;
+	}
+	else
+	{
+		SecretKey = Settings->SecretKeyProduction;
+	}
 }
 
 bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
@@ -104,7 +119,7 @@ bool UGosuPurchasesController::IsDevelopmentModeEnabled() const
 	return bDevelopmentModeEnabled;
 }
 
-TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FString& Url)
+TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FString& Url, const FString& BodyContent, ERequestVerb Verb)
 {
 	TSharedRef<IHttpRequest> HttpRequest = FHttpModule::Get().CreateRequest();
 
@@ -113,6 +128,39 @@ TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FStri
 	HttpRequest->SetHeader(TEXT("X-ENGINE"), TEXT("UE4"));
 	HttpRequest->SetHeader(TEXT("X-ENGINE-V"), ENGINE_VERSION_STRING);
 	HttpRequest->SetHeader(TEXT("X-SDK-V"), GOSU_PURCHASES_VERSION);
+
+	switch (Verb)
+	{
+	case ERequestVerb::GET:
+		HttpRequest->SetVerb(TEXT("GET"));
+		break;
+
+	case ERequestVerb::POST:
+		HttpRequest->SetVerb(TEXT("POST"));
+		break;
+
+	default:
+		unimplemented();
+	}
+
+	if (!BodyContent.IsEmpty())
+	{
+		HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+		HttpRequest->SetContentAsString(BodyContent);
+	}
+
+	// Authorization
+	if (!SecretKey.IsEmpty())
+	{
+		uint8 HMACHash[20];
+		FSHA1::HMACBuffer(*SecretKey, SecretKey.Len(), *BodyContent, BodyContent.Len(), HMACHash);
+		FString RequestHash = FBase64::Encode(HMACHash, ARRAY_COUNT(HMACHash));
+		HttpRequest->SetHeader(TEXT("Authorization"), RequestHash);
+	}
+	else
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't setup request auth: SecretKey is empty"), *VA_FUNC_LINE);
+	}
 
 	return HttpRequest;
 }

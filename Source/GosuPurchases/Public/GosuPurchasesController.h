@@ -10,6 +10,14 @@
 
 #include "GosuPurchasesController.generated.h"
 
+/** Verb used by the request */
+UENUM(BlueprintType)
+enum class ERequestVerb : uint8
+{
+	GET,
+	POST
+};
+
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnRequestError, int32, StatusCode, int32, ErrorCode, const FString&, ErrorMessage);
 
 UCLASS()
@@ -38,5 +46,9 @@ protected:
 
 private:
 	/** Create http request and add API meta */
-	TSharedRef<IHttpRequest> CreateHttpRequest(const FString& Url);
+	TSharedRef<IHttpRequest> CreateHttpRequest(const FString& Url, const FString& BodyContent = TEXT(""), ERequestVerb Verb = ERequestVerb::POST);
+
+private:
+	/** Cached secret key */
+	FString SecretKey;
 };
