@@ -126,23 +126,26 @@ void UGosuPurchasesController::CollectItemDetailsShow(ERecommendationScenario Sc
 		return;
 	}
 
-	FGosuItemInfo ItemInfo;
-	ItemInfo.name = ItemName;
-	ItemInfo.price = Price;
-	ItemInfo.currency = Currency;
-	ItemInfo.description = Description;
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("impressionId"), ImpressionId.ToString());
+	RequestDataJson->SetStringField(TEXT("eventUUID"), FGuid::NewGuid().ToString());
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Scenario));
+	RequestDataJson->SetStringField(TEXT("category"), Category);
+	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
 
-	FGosuShowcaseEvent Event;
-	Event.EventType = EGosuShowcaseEventType::PreviewOpen;
-	Event.impressionId = ImpressionId.ToString();
-	Event.scenario = Scenario;
-	Event.sku = ItemSKU;
-	Event.category = Category;
-	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
-	Event.eventUUID = FGuid::NewGuid().ToString();
-	Event.item = ItemInfo;
+	TSharedPtr<FJsonObject> ItemDataJson = MakeShareable(new FJsonObject);
+	ItemDataJson->SetStringField(TEXT("name"), ItemName);
+	ItemDataJson->SetNumberField(TEXT("price"), Price);
+	ItemDataJson->SetStringField(TEXT("currency"), Currency);
+	ItemDataJson->SetStringField(TEXT("description"), Description);
+	RequestDataJson->SetObjectField(TEXT("item"), ItemDataJson);
 
-	ShowcaseEvents.Add(Event);
+	const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/preview_open"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
@@ -152,34 +155,19 @@ void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Sc
 		return;
 	}
 
-	FGosuShowcaseEvent Event;
-	Event.EventType = EGosuShowcaseEventType::PreviewClose;
-	Event.impressionId = ImpressionId.ToString();
-	Event.scenario = Scenario;
-	Event.sku = ItemSKU;
-	Event.category = Category;
-	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
-	Event.eventUUID = FGuid::NewGuid().ToString();
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("impressionId"), ImpressionId.ToString());
+	RequestDataJson->SetStringField(TEXT("eventUUID"), FGuid::NewGuid().ToString());
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Scenario));
+	RequestDataJson->SetStringField(TEXT("category"), Category);
+	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
 
-	ShowcaseEvents.Add(Event);
+	const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/preview_close"), *GosuApiEndpoint, *AppId);
 
-	TSharedPtr<FJsonObject> EventJson = MakeShareable(new FJsonObject);
-	EventJson->SetStringField(TEXT("impressionId"), Event.impressionId);
-	EventJson->SetStringField(TEXT("eventUUID"), Event.eventUUID);
-	EventJson->SetNumberField(TEXT("timestamp"), Event.timestamp);
-	EventJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Event.scenario));
-	EventJson->SetStringField(TEXT("category"), Event.category);
-	EventJson->SetStringField(TEXT("sku"), Event.sku);
-
-	if (!Event.item.name.IsEmpty())
-	{
-		TSharedPtr<FJsonObject> ItemJson = MakeShareable(new FJsonObject);
-		ItemJson->SetStringField(TEXT("name"), Event.item.name);
-		ItemJson->SetNumberField(TEXT("price"), Event.item.price);
-		ItemJson->SetStringField(TEXT("currency"), Event.item.currency);
-		ItemJson->SetStringField(TEXT("description"), Event.item.description);
-		EventJson->SetObjectField(TEXT("item"), ItemJson);
-	}
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
@@ -459,12 +447,15 @@ void UGosuPurchasesController::FlushEvents()
 		EventJson->SetStringField(TEXT("category"), Event.category);
 		EventJson->SetStringField(TEXT("sku"), Event.sku);
 
-		TSharedPtr<FJsonObject> ItemJson = MakeShareable(new FJsonObject);
-		ItemJson->SetStringField(TEXT("name"), Event.item.name);
-		ItemJson->SetNumberField(TEXT("price"), Event.item.price);
-		ItemJson->SetStringField(TEXT("currency"), Event.item.currency);
-		ItemJson->SetStringField(TEXT("description"), Event.item.description);
-		EventJson->SetObjectField(TEXT("item"), ItemJson);
+		if (!Event.item.name.IsEmpty())
+		{
+			TSharedPtr<FJsonObject> ItemJson = MakeShareable(new FJsonObject);
+			ItemJson->SetStringField(TEXT("name"), Event.item.name);
+			ItemJson->SetNumberField(TEXT("price"), Event.item.price);
+			ItemJson->SetStringField(TEXT("currency"), Event.item.currency);
+			ItemJson->SetStringField(TEXT("description"), Event.item.description);
+			EventJson->SetObjectField(TEXT("item"), ItemJson);
+		}
 
 		TSharedPtr<FJsonValue> NewVal = MakeShareable(new FJsonValueObject(EventJson));
 
