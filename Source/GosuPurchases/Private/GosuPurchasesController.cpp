@@ -40,6 +40,43 @@ void UGosuPurchasesController::Initialize()
 	}
 }
 
+void UGosuPurchasesController::CollectSession(const FString& PlayerId)
+{
+
+}
+
+void UGosuPurchasesController::CollectStoreOpened()
+{
+}
+
+void UGosuPurchasesController::CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+{
+}
+
+void UGosuPurchasesController::CollectShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+{
+}
+
+void UGosuPurchasesController::CollectItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+{
+}
+
+void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+{
+}
+
+void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
+{
+}
+
+void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
+{
+}
+
+void UGosuPurchasesController::GetRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
+{
+}
+
 bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
 {
 	FString ErrorStr;
@@ -160,6 +197,11 @@ TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FStri
 	}
 
 	return HttpRequest;
+}
+
+TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const
+{
+	return TArray<FGosuRecommendedItem>();
 }
 
 #undef LOCTEXT_NAMESPACE
