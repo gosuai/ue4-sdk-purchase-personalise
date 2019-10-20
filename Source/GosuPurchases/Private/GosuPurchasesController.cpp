@@ -73,22 +73,101 @@ void UGosuPurchasesController::CollectStoreOpened()
 
 void UGosuPurchasesController::CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
+	if (!CheckUserId() || !CheckImpressionId())
+	{
+		return;
+	}
+
+	FGosuItemInfo ItemInfo;
+	ItemInfo.name = ItemName;
+	ItemInfo.price = Price;
+	ItemInfo.currency = Currency;
+	ItemInfo.description = Description;
+
+	FGosuShowcaseEvent Event;
+	Event.EventType = EGosuShowcaseEventType::Show;
+	Event.impressionId = ImpressionId.ToString();
+	Event.scenario = Scenario;
+	Event.sku = ItemSKU;
+	Event.category = Category;
+	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	Event.eventUUID = FGuid::NewGuid().ToString();
+	Event.item = ItemInfo;
+
+	ShowcaseEvents.Add(Event);
 }
 
 void UGosuPurchasesController::CollectShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
 {
+	if (!CheckUserId() || !CheckImpressionId())
+	{
+		return;
+	}
+
+	FGosuShowcaseEvent Event;
+	Event.EventType = EGosuShowcaseEventType::Hide;
+	Event.impressionId = ImpressionId.ToString();
+	Event.scenario = Scenario;
+	Event.sku = ItemSKU;
+	Event.category = Category;
+	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	Event.eventUUID = FGuid::NewGuid().ToString();
+
+	ShowcaseEvents.Add(Event);
 }
 
 void UGosuPurchasesController::CollectItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
+	if (!CheckUserId() || !CheckImpressionId())
+	{
+		return;
+	}
+
+	FGosuItemInfo ItemInfo;
+	ItemInfo.name = ItemName;
+	ItemInfo.price = Price;
+	ItemInfo.currency = Currency;
+	ItemInfo.description = Description;
+
+	FGosuShowcaseEvent Event;
+	Event.EventType = EGosuShowcaseEventType::PreviewOpen;
+	Event.impressionId = ImpressionId.ToString();
+	Event.scenario = Scenario;
+	Event.sku = ItemSKU;
+	Event.category = Category;
+	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	Event.eventUUID = FGuid::NewGuid().ToString();
+	Event.item = ItemInfo;
+
+	ShowcaseEvents.Add(Event);
 }
 
 void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
 {
+	if (!CheckUserId() || !CheckImpressionId())
+	{
+		return;
+	}
+
+	FGosuShowcaseEvent Event;
+	Event.EventType = EGosuShowcaseEventType::PreviewClose;
+	Event.impressionId = ImpressionId.ToString();
+	Event.scenario = Scenario;
+	Event.sku = ItemSKU;
+	Event.category = Category;
+	Event.timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	Event.eventUUID = FGuid::NewGuid().ToString();
+
+	ShowcaseEvents.Add(Event);
 }
 
 void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
 {
+	if (!CheckUserId())
+	{
+		return;
+	}
+
 	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
 	const FGuid EventUUID = FGuid::NewGuid();
 
@@ -106,6 +185,11 @@ void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
 
 void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
 {
+	if (!CheckUserId())
+	{
+		return;
+	}
+
 	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
 	const FGuid EventUUID = FGuid::NewGuid();
 
@@ -300,6 +384,28 @@ FString UGosuPurchasesController::GetInAppPurchaseStateAsString(EInAppPurchaseSt
 	}
 
 	return FString("Invalid");
+}
+
+bool UGosuPurchasesController::CheckUserId() const
+{
+	if (UserID.IsEmpty())
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't process request: userId is invalid"), *VA_FUNC_LINE);
+		return false;
+	}
+
+	return true;
+}
+
+bool UGosuPurchasesController::CheckImpressionId() const
+{
+	if (ImpressionId.IsValid())
+	{
+		return true;
+	}
+
+	UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't process request: impressionId is invalid"), *VA_FUNC_LINE);
+	return false;
 }
 
 TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const

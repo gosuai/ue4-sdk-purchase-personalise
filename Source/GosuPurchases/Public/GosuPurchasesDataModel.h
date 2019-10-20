@@ -17,6 +17,15 @@ enum class ERecommendationScenario : uint8
 	Popup
 };
 
+UENUM(BlueprintType)
+enum class EGosuShowcaseEventType : uint8
+{
+	Show,
+	Hide,
+	PreviewOpen,
+	PreviewClose
+};
+
 USTRUCT(BlueprintType)
 struct GOSUPURCHASES_API FGosuItemInfo
 {
@@ -50,6 +59,14 @@ struct GOSUPURCHASES_API FGosuShowcaseEvent
 public:
 	GENERATED_BODY()
 
+	/** (internal) Event category (storage filter) */
+	UPROPERTY(BlueprintReadOnly, Category = "Event Data")
+	EGosuShowcaseEventType EventType;
+
+	/** Event impression id as unique store open id */
+	UPROPERTY(BlueprintReadOnly, Category = "Event Data")
+	FString impressionId;
+
 	/** Unique event id */
 	UPROPERTY(BlueprintReadOnly, Category = "Event Data")
 	FString eventUUID;
@@ -76,7 +93,8 @@ public:
 
 public:
 	FGosuShowcaseEvent()
-		: timestamp(0)
+		: EventType(EGosuShowcaseEventType::Show)
+		, timestamp(0)
 		, scenario(ERecommendationScenario::Default){};
 };
 

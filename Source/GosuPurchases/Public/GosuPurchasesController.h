@@ -127,6 +127,10 @@ protected:
 	/** Convert enum to string */
 	FString GetInAppPurchaseStateAsString(EInAppPurchaseState::Type EnumValue) const;
 
+	/** Helper functions to check filled stuff */
+	bool CheckUserId() const;
+	bool CheckImpressionId() const;
+
 public:
 	/** Get recommendated items for desired category */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data")
@@ -151,4 +155,7 @@ private:
 
 	/** Cached AppId */
 	FString AppId;
+
+	/** Cached showcase events to be sent in bundle */
+	TArray<FGosuShowcaseEvent> ShowcaseEvents;
 };
