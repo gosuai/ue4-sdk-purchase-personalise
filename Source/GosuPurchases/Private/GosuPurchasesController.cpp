@@ -248,6 +248,7 @@ void UGosuPurchasesController::GetRecommendations_HttpRequestComplete(FHttpReque
 	}
 
 	Recommendations.Add(Recommendation.scenario, Recommendation);
+	SaveData();
 
 	FString ResponseStr = HttpResponse->GetContentAsString();
 	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
@@ -308,12 +309,13 @@ bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, F
 
 void UGosuPurchasesController::LoadData()
 {
-	// @TODO UGosuPurchasesSave::Load()
+	auto SavedData = UGosuPurchasesSave::Load();
+	Recommendations = SavedData.Recommendations;
 }
 
 void UGosuPurchasesController::SaveData()
 {
-	// @TODO UGosuPurchasesSave::Save(...);
+	UGosuPurchasesSave::Save(FGosuPurchasesSaveData(Recommendations));
 }
 
 bool UGosuPurchasesController::IsDevelopmentModeEnabled() const

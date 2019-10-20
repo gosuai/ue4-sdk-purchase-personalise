@@ -5,6 +5,7 @@
 
 #include "GameFramework/SaveGame.h"
 
+#include "GosuPurchasesDataModel.h"
 #include "GosuPurchasesDefines.h"
 
 #include "GosuPurchasesSave.generated.h"
@@ -14,9 +15,13 @@ struct GOSUPURCHASES_API FGosuPurchasesSaveData
 {
 	GENERATED_USTRUCT_BODY()
 
-	// @TODO Latest prediction is here
+	/** Latest recommendations storage */
+	UPROPERTY()
+	TMap<ERecommendationScenario, FGosuRecommendation> Recommendations;
 
 	FGosuPurchasesSaveData(){};
+	FGosuPurchasesSaveData(TMap<ERecommendationScenario, FGosuRecommendation> InRecommendations)
+		: Recommendations(InRecommendations){};
 };
 
 UCLASS()
