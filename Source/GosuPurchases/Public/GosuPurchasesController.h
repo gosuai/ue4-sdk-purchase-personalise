@@ -6,6 +6,7 @@
 #include "GosuPurchasesDataModel.h"
 
 #include "Delegates/DelegateCombinations.h"
+#include "Engine/EngineTypes.h"
 #include "Http.h"
 #include "Interfaces/OnlineStoreInterface.h"
 
