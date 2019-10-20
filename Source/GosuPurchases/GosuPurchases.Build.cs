@@ -16,6 +16,7 @@ public class GosuPurchases : ModuleRules
                 "HTTP",
                 "Json",
                 "JsonUtilities",
+                "OnlineSubsystem"
             }
             );
 

@@ -14,6 +14,8 @@ struct GOSUPURCHASES_API FGosuPurchasesSaveData
 {
 	GENERATED_USTRUCT_BODY()
 
+	// @TODO Latest prediction is here
+
 	FGosuPurchasesSaveData(){};
 };
 

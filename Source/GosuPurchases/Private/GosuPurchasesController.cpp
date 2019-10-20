@@ -28,12 +28,10 @@ void UGosuPurchasesController::Initialize()
 {
 	LoadData();
 
+	// Pre-cache secret key
 	const UGosuPurchasesSettings* Settings = FGosuPurchasesModule::Get().GetSettings();
-	if (Settings->bDevelopmentMode)
+	if (IsDevelopmentModeEnabled())
 	{
-#if UE_BUILD_SHIPPING
-		UE_LOG(LogGosuPurchases, Warning, TEXT("%s: Developmend mode should be disabled in Shipping build"), *VA_FUNC_LINE);
-#endif
 		SecretKey = Settings->SecretKeyDevelopment;
 	}
 	else
@@ -45,7 +43,6 @@ void UGosuPurchasesController::Initialize()
 bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
 {
 	FString ErrorStr;
-	int32 ErrorCode = 0;
 	int32 StatusCode = 204;
 	FString ResponseStr = TEXT("invalid");
 
@@ -87,7 +84,7 @@ bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, F
 	if (!ErrorStr.IsEmpty())
 	{
 		UE_LOG(LogGosuPurchases, Warning, TEXT("%s: request failed (%s): %s"), *VA_FUNC_LINE, *ErrorStr, *ResponseStr);
-		ErrorCallback.ExecuteIfBound(StatusCode, ErrorCode, ErrorStr);
+		ErrorCallback.ExecuteIfBound(StatusCode, ErrorStr);
 		return true;
 	}
 

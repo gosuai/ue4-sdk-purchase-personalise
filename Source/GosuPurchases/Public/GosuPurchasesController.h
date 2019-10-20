@@ -7,6 +7,7 @@
 
 #include "Delegates/DelegateCombinations.h"
 #include "Http.h"
+#include "Interfaces/OnlineStoreInterface.h"
 
 #include "GosuPurchasesController.generated.h"
 
@@ -18,7 +19,7 @@ enum class ERequestVerb : uint8
 	POST
 };
 
-DECLARE_DYNAMIC_DELEGATE_ThreeParams(FOnRequestError, int32, StatusCode, int32, ErrorCode, const FString&, ErrorMessage);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnRequestError, int32, StatusCode, const FString&, ErrorMessage);
 
 UCLASS()
 class GOSUPURCHASES_API UGosuPurchasesController : public UObject
