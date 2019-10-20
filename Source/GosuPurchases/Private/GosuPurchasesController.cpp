@@ -12,12 +12,16 @@
 #include "Engine.h"
 #include "Json.h"
 #include "JsonObjectConverter.h"
+#include "Kismet/GameplayStatics.h"
 #include "Misc/Base64.h"
+#include "Misc/Guid.h"
 #include "Misc/SecureHash.h"
 #include "Modules/ModuleManager.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "FGosuPurchasesModule"
+
+const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://localhost:3000/api/"));
 
 UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -38,15 +42,33 @@ void UGosuPurchasesController::Initialize()
 	{
 		SecretKey = Settings->SecretKeyProduction;
 	}
+
+	// Cache app id
+	AppId = Settings->AppId;
 }
 
 void UGosuPurchasesController::CollectSession(const FString& PlayerId)
 {
+	UserID = PlayerId;
 
+	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	FString PlatformName = UGameplayStatics::GetPlatformName();
+
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
+	RequestDataJson->SetStringField(TEXT("platform"), PlatformName);
+
+	const FString Url = FString::Printf(TEXT("%s/collect/%s/session"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuPurchasesController::CollectStoreOpened()
 {
+	// No requests, just impressionId generation
+	ImpressionId = FGuid::NewGuid();
 }
 
 void UGosuPurchasesController::CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
@@ -197,6 +219,14 @@ TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FStri
 	}
 
 	return HttpRequest;
+}
+
+FString UGosuPurchasesController::SerializeJson(const TSharedPtr<FJsonObject> DataJson) const
+{
+	FString JsonContent;
+	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonContent);
+	FJsonSerializer::Serialize(DataJson.ToSharedRef(), Writer);
+	return JsonContent;
 }
 
 TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const

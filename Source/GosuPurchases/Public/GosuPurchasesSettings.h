@@ -13,6 +13,10 @@ class GOSUPURCHASES_API UGosuPurchasesSettings : public UObject
 	GENERATED_UCLASS_BODY()
 
 public:
+	/** Application ID */
+	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GOSU Purchases Settings")
+	FString AppId;
+
 	/** Credentials for development mode */
 	UPROPERTY(Config, EditAnywhere, BlueprintReadOnly, Category = "GOSU Purchases Settings")
 	FString SecretKeyDevelopment;

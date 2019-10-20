@@ -11,6 +11,9 @@
 
 #include "GosuPurchasesController.generated.h"
 
+class FJsonObject;
+struct FGuid;
+
 /** Verb used by the request */
 UENUM(BlueprintType)
 enum class ERequestVerb : uint8
@@ -116,6 +119,9 @@ protected:
 	/** Create http request and add API meta */
 	TSharedRef<IHttpRequest> CreateHttpRequest(const FString& Url, const FString& BodyContent = TEXT(""), ERequestVerb Verb = ERequestVerb::POST);
 
+	/** Serialize json object into string */
+	FString SerializeJson(const TSharedPtr<FJsonObject> DataJson) const;
+
 public:
 	/** Get recommendated items for desired category */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data")
@@ -125,7 +131,19 @@ protected:
 	/** Cached recommendations storage */
 	TMap<ERecommendationScenario, FGosuRecommendation> Recommendations;
 
+	/** Cached user id */
+	FString UserID;
+
+	/** Cached impression id (store opened event) */
+	FGuid ImpressionId;
+
+protected:
+	static const FString GosuApiEndpoint;
+
 private:
 	/** Cached secret key */
 	FString SecretKey;
+
+	/** Cached AppId */
+	FString AppId;
 };
