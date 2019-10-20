@@ -97,6 +97,41 @@ void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, 
 
 void UGosuPurchasesController::GetRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
 {
+	const FString Url = FString::Printf(TEXT("%s/recommend/%s/store/%s?category=%s"), *GosuApiEndpoint, *AppId, *UserID, *Category);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, FString(), ERequestVerb::GET);
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::GetRecommendations_HttpRequestComplete, SuccessCallback);
+	HttpRequest->ProcessRequest();
+}
+
+void UGosuPurchasesController::GetRecommendations_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceiveRecommendation SuccessCallback)
+{
+	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
+	{
+		return;
+	}
+
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*HttpResponse->GetContentAsString());
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't deserialize server response"), *VA_FUNC_LINE);
+		return;
+	}
+
+	FGosuRecommendation Recommendation;
+	if (!FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), FGosuRecommendation::StaticStruct(), &Recommendation))
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't convert server response to struct"), *VA_FUNC_LINE);
+		return;
+	}
+
+	Recommendations.Add(Recommendation.scenario, Recommendation);
+
+	FString ResponseStr = HttpResponse->GetContentAsString();
+	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
+
+	SuccessCallback.ExecuteIfBound(Recommendation);
 }
 
 bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
