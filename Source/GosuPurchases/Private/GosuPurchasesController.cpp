@@ -28,7 +28,7 @@ UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& Obj
 {
 }
 
-void UGosuPurchasesController::Initialize()
+void UGosuPurchasesController::Initialize(UWorld* World)
 {
 	LoadData();
 
@@ -45,6 +45,9 @@ void UGosuPurchasesController::Initialize()
 
 	// Cache app id
 	AppId = Settings->AppId;
+
+	// Set flushing timer
+	World->GetTimerManager().SetTimer(FlushTimerHandle, FTimerDelegate::CreateUObject(this, &UGosuPurchasesController::FlushEvents), 1.f, true);
 }
 
 void UGosuPurchasesController::CollectSession(const FString& PlayerId)
@@ -159,6 +162,24 @@ void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Sc
 	Event.eventUUID = FGuid::NewGuid().ToString();
 
 	ShowcaseEvents.Add(Event);
+
+	TSharedPtr<FJsonObject> EventJson = MakeShareable(new FJsonObject);
+	EventJson->SetStringField(TEXT("impressionId"), Event.impressionId);
+	EventJson->SetStringField(TEXT("eventUUID"), Event.eventUUID);
+	EventJson->SetNumberField(TEXT("timestamp"), Event.timestamp);
+	EventJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Event.scenario));
+	EventJson->SetStringField(TEXT("category"), Event.category);
+	EventJson->SetStringField(TEXT("sku"), Event.sku);
+
+	if (!Event.item.name.IsEmpty())
+	{
+		TSharedPtr<FJsonObject> ItemJson = MakeShareable(new FJsonObject);
+		ItemJson->SetStringField(TEXT("name"), Event.item.name);
+		ItemJson->SetNumberField(TEXT("price"), Event.item.price);
+		ItemJson->SetStringField(TEXT("currency"), Event.item.currency);
+		ItemJson->SetStringField(TEXT("description"), Event.item.description);
+		EventJson->SetObjectField(TEXT("item"), ItemJson);
+	}
 }
 
 void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
@@ -386,6 +407,16 @@ FString UGosuPurchasesController::GetInAppPurchaseStateAsString(EInAppPurchaseSt
 	return FString("Invalid");
 }
 
+FString UGosuPurchasesController::GetScenarioAsString(ERecommendationScenario EnumValue) const
+{
+	if (const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("ERecommendationScenario"), true))
+	{
+		return EnumPtr->GetNameByValue((int64)EnumValue).ToString();
+	}
+
+	return FString("Invalid");
+}
+
 bool UGosuPurchasesController::CheckUserId() const
 {
 	if (UserID.IsEmpty())
@@ -406,6 +437,75 @@ bool UGosuPurchasesController::CheckImpressionId() const
 
 	UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't process request: impressionId is invalid"), *VA_FUNC_LINE);
 	return false;
+}
+
+void UGosuPurchasesController::FlushEvents()
+{
+	if (ShowcaseEvents.Num() == 0)
+	{
+		return;
+	}
+
+	TArray<TSharedPtr<FJsonValue>> ShowEvents;
+	TArray<TSharedPtr<FJsonValue>> HideEvents;
+
+	for (auto& Event : ShowcaseEvents)
+	{
+		TSharedPtr<FJsonObject> EventJson = MakeShareable(new FJsonObject);
+		EventJson->SetStringField(TEXT("impressionId"), Event.impressionId);
+		EventJson->SetStringField(TEXT("eventUUID"), Event.eventUUID);
+		EventJson->SetNumberField(TEXT("timestamp"), Event.timestamp);
+		EventJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Event.scenario));
+		EventJson->SetStringField(TEXT("category"), Event.category);
+		EventJson->SetStringField(TEXT("sku"), Event.sku);
+
+		TSharedPtr<FJsonObject> ItemJson = MakeShareable(new FJsonObject);
+		ItemJson->SetStringField(TEXT("name"), Event.item.name);
+		ItemJson->SetNumberField(TEXT("price"), Event.item.price);
+		ItemJson->SetStringField(TEXT("currency"), Event.item.currency);
+		ItemJson->SetStringField(TEXT("description"), Event.item.description);
+		EventJson->SetObjectField(TEXT("item"), ItemJson);
+
+		TSharedPtr<FJsonValue> NewVal = MakeShareable(new FJsonValueObject(EventJson));
+
+		switch (Event.EventType)
+		{
+		case EGosuShowcaseEventType::Show:
+			ShowEvents.Add(NewVal);
+			break;
+		case EGosuShowcaseEventType::Hide:
+			HideEvents.Add(NewVal);
+			break;
+		default:
+			unimplemented();
+		}
+	}
+
+	ShowcaseEvents.Empty();
+
+	if (ShowEvents.Num() > 0)
+	{
+		TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+		RequestDataJson->SetStringField(TEXT("uid"), UserID);
+		RequestDataJson->SetArrayField(TEXT("events"), ShowEvents);
+
+		const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/show"), *GosuApiEndpoint, *AppId);
+
+		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+		HttpRequest->ProcessRequest();
+	}
+
+	if (HideEvents.Num() > 0)
+	{
+		TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+		RequestDataJson->SetStringField(TEXT("uid"), UserID);
+		RequestDataJson->SetArrayField(TEXT("events"), HideEvents);
+
+		const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/hide"), *GosuApiEndpoint, *AppId);
+
+		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+		HttpRequest->ProcessRequest();
+	}
 }
 
 TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const

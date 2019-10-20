@@ -33,7 +33,7 @@ class GOSUPURCHASES_API UGosuPurchasesController : public UObject
 public:
 	/** Initialize controller with provided data (used to override project settings) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
-	void Initialize();
+	void Initialize(UWorld* World);
 
 	/** Register game session with provided player id */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
@@ -126,10 +126,15 @@ protected:
 
 	/** Convert enum to string */
 	FString GetInAppPurchaseStateAsString(EInAppPurchaseState::Type EnumValue) const;
+	FString GetScenarioAsString(ERecommendationScenario EnumValue) const;
 
 	/** Helper functions to check filled stuff */
 	bool CheckUserId() const;
 	bool CheckImpressionId() const;
+
+	/** Flush showcase events */
+	UFUNCTION()
+	void FlushEvents();
 
 public:
 	/** Get recommendated items for desired category */
@@ -158,4 +163,7 @@ private:
 
 	/** Cached showcase events to be sent in bundle */
 	TArray<FGosuShowcaseEvent> ShowcaseEvents;
+
+	/** Events flush timer handle */
+	FTimerHandle FlushTimerHandle;
 };

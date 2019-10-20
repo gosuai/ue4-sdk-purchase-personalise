@@ -39,7 +39,7 @@ void FGosuPurchasesModule::StartupModule()
 		PurchasesContoller->AddToRoot();
 
 		// Initialize controller with default settings
-		PurchasesContoller->Initialize();
+		PurchasesContoller->Initialize(World);
 
 		GosuPurchasesControllers.Add(World, PurchasesContoller);
 
