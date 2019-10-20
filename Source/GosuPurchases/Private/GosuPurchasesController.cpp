@@ -89,10 +89,38 @@ void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Sc
 
 void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
 {
+	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	const FGuid EventUUID = FGuid::NewGuid();
+
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
+	RequestDataJson->SetStringField(TEXT("eventUUID"), EventUUID.ToString());
+	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
+
+	const FString Url = FString::Printf(TEXT("%s/collect/%s/purchase_started"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
 {
+	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
+	const FGuid EventUUID = FGuid::NewGuid();
+
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
+	RequestDataJson->SetStringField(TEXT("eventUUID"), EventUUID.ToString());
+	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
+	RequestDataJson->SetStringField(TEXT("transaction"), TransactionID);
+	RequestDataJson->SetStringField(TEXT("status"), GetInAppPurchaseStateAsString(PurchaseState));
+
+	const FString Url = FString::Printf(TEXT("%s/collect/%s/purchase_completed"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuPurchasesController::GetRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
@@ -262,6 +290,16 @@ FString UGosuPurchasesController::SerializeJson(const TSharedPtr<FJsonObject> Da
 	TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonContent);
 	FJsonSerializer::Serialize(DataJson.ToSharedRef(), Writer);
 	return JsonContent;
+}
+
+FString UGosuPurchasesController::GetInAppPurchaseStateAsString(EInAppPurchaseState::Type EnumValue) const
+{
+	if (const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EInAppPurchaseState"), true))
+	{
+		return EnumPtr->GetNameByValue((int64)EnumValue).ToString();
+	}
+
+	return FString("Invalid");
 }
 
 TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const

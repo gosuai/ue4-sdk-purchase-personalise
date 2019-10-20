@@ -124,6 +124,9 @@ protected:
 	/** Serialize json object into string */
 	FString SerializeJson(const TSharedPtr<FJsonObject> DataJson) const;
 
+	/** Convert enum to string */
+	FString GetInAppPurchaseStateAsString(EInAppPurchaseState::Type EnumValue) const;
+
 public:
 	/** Get recommendated items for desired category */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data")
