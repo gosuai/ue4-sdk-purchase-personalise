@@ -47,11 +47,11 @@ public:
 	 * @param Description (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect", meta = (WorldContext = "WorldContextObject"))
-	static void CollectShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
+	static void CollectShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item was hidden at store page */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect", meta = (WorldContext = "WorldContextObject"))
-	static void CollectShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
+	static void CollectShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU);
 
 	/**
 	 * Item details window was shown
@@ -65,11 +65,11 @@ public:
 	 * @param Description (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect", meta = (WorldContext = "WorldContextObject"))
-	static void CollectItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
+	static void CollectItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item details window was closed */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect", meta = (WorldContext = "WorldContextObject"))
-	static void CollectItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
+	static void CollectItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU);
 
 	/** Player triggered purchase process for item */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect", meta = (WorldContext = "WorldContextObject"))
@@ -92,9 +92,9 @@ public:
 	 * @param Category (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Receive", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "SuccessCallback"))
-	static void GetRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
+	static void ReceiveRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback);
 
-	/** Get recommendated items for desired category */
+	/** Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
 	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario);
 };

@@ -46,35 +46,35 @@ void UGosuPurchasesLibrary::CollectStoreOpened(UObject* WorldContextObject)
 	}
 }
 
-void UGosuPurchasesLibrary::CollectShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesLibrary::CollectShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectShowcaseItemShow(Scenario, Category, ItemSKU, ItemName, Price, Currency, Description);
+		PurchasesController->CollectShowcaseItemShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+void UGosuPurchasesLibrary::CollectShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectShowcaseItemHide(Scenario, Category, ItemSKU);
+		PurchasesController->CollectShowcaseItemHide(Scenario, StoreCategory, ItemSKU);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesLibrary::CollectItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectItemDetailsShow(Scenario, Category, ItemSKU, ItemName, Price, Currency, Description);
+		PurchasesController->CollectItemDetailsShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+void UGosuPurchasesLibrary::CollectItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectItemDetailsHide(Scenario, Category, ItemSKU);
+		PurchasesController->CollectItemDetailsHide(Scenario, StoreCategory, ItemSKU);
 	}
 }
 
@@ -94,11 +94,11 @@ void UGosuPurchasesLibrary::CollectPurchaseCompleted(UObject* WorldContextObject
 	}
 }
 
-void UGosuPurchasesLibrary::GetRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
+void UGosuPurchasesLibrary::ReceiveRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->GetRecommendations(Scenario, Category, SuccessCallback);
+		PurchasesController->ReceiveRecommendations(Scenario, StoreCategory, SuccessCallback);
 	}
 }
 

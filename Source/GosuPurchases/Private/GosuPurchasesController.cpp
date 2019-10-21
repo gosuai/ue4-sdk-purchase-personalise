@@ -216,16 +216,16 @@ void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, 
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::GetRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
+void UGosuPurchasesController::ReceiveRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
 {
 	const FString Url = FString::Printf(TEXT("%s/recommend/%s/store/%s?category=%s"), *GosuApiEndpoint, *AppId, *UserID, *Category);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, FString(), ERequestVerb::GET);
-	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::GetRecommendations_HttpRequestComplete, SuccessCallback);
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::ReceiveRecommendations_HttpRequestComplete, SuccessCallback);
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::GetRecommendations_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceiveRecommendation SuccessCallback)
+void UGosuPurchasesController::ReceiveRecommendations_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceiveRecommendation SuccessCallback)
 {
 	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
 	{
