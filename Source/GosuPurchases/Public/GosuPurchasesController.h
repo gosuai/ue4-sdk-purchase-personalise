@@ -37,70 +37,30 @@ public:
 	void Initialize(UWorld* World);
 
 	/** Register game session with provided player id */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
 	void CollectSession(const FString& PlayerId);
 
 	/** Generates unique impression id for futher events */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
 	void CollectStoreOpened();
 
-	/**
-	 * Item is shown at store page right now 
-	 *
-	 * @param Scenario 
-	 * @param Category 
-	 * @param ItemSKU 
-	 * @param ItemName 
-	 * @param Price 
-	 * @param Currency
-	 * @param Description (optional) 
-	 */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
+	/** Item is shown at store page right now  */
 	void CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item was hidden at store page */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
 	void CollectShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
 
-	/**
-	 * Item details window was shown
-	 *
-	 * @param Scenario 
-	 * @param Category 
-	 * @param ItemSKU 
-	 * @param ItemName 
-	 * @param Price 
-	 * @param Currency
-	 * @param Description (optional) 
-	 */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
+	/** Item details window was shown */
 	void CollectItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item details window was closed */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
 	void CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
 
 	/** Player triggered purchase process for item */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
 	void CollectPurchaseStarted(const FString& ItemSKU);
 
-	/**
-	 * Purchase state was updated
-	 *
-	 * @param ItemSKU 
-	 * @param PurchaseState 
-	 * @param TransactionID  
-	 */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
+	/** Purchase state was updated */
 	void CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID = TEXT(""));
 
-	/**
-	 * Receive recommended items for desired scenario and store category
-	 *
-	 * @param Scenario 
-	 * @param Category (optional) 
-	 */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Receive", meta = (AutoCreateRefTerm = "SuccessCallback"))
+	/** Receive recommended items for desired scenario and store category */
 	void GetRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
 
 protected:
