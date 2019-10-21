@@ -101,3 +101,13 @@ void UGosuPurchasesLibrary::GetRecommendations(UObject* WorldContextObject, ERec
 		PurchasesController->GetRecommendations(Scenario, Category, SuccessCallback);
 	}
 }
+
+TArray<FGosuRecommendedItem> UGosuPurchasesLibrary::GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario)
+{
+	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
+	{
+		return PurchasesController->GetRecommendedItems(Scenario);
+	}
+
+	return TArray<FGosuRecommendedItem>();
+}

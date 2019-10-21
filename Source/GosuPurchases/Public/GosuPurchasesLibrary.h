@@ -21,7 +21,6 @@ class GOSUPURCHASES_API UGosuPurchasesLibrary : public UBlueprintFunctionLibrary
 
 public:
 	/** Direct access to purchases controller */
-	UFUNCTION(BlueprintPure, Category = "GOSU|Purchases", meta = (WorldContext = "WorldContextObject"))
 	static UGosuPurchasesController* GetPurchasesController(UObject* WorldContextObject);
 
 	/** Direct access to purchases settings */
@@ -93,5 +92,9 @@ public:
 	 * @param Category (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Receive", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "SuccessCallback"))
-	void GetRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
+	static void GetRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
+
+	/** Get recommendated items for desired category */
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
+	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario);
 };

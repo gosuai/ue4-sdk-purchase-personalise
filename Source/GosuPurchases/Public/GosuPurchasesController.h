@@ -99,7 +99,6 @@ protected:
 
 public:
 	/** Get recommendated items for desired category */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data")
 	TArray<FGosuRecommendedItem> GetRecommendedItems(ERecommendationScenario Scenario) const;
 
 protected:
