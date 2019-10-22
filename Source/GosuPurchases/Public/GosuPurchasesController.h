@@ -6,9 +6,9 @@
 #include "GosuPurchasesDataModel.h"
 
 #include "Delegates/DelegateCombinations.h"
-#include "Engine/EngineTypes.h"
 #include "Http.h"
 #include "Interfaces/OnlineStoreInterface.h"
+#include "Tickable.h"
 
 #include "GosuPurchasesController.generated.h"
 
@@ -27,9 +27,17 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceiveRecommendation, const FGosuRecommend
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnRequestError, int32, StatusCode, const FString&, ErrorMessage);
 
 UCLASS()
-class GOSUPURCHASES_API UGosuPurchasesController : public UObject
+class GOSUPURCHASES_API UGosuPurchasesController : public UObject, public FTickableGameObject
 {
 	GENERATED_UCLASS_BODY()
+
+protected:
+	// FTickableGameObject begin
+	virtual void Tick(float DeltaTime) override;
+	virtual bool IsTickable() const override { return true; }
+	virtual bool IsTickableWhenPaused() const override { return true; }
+	virtual TStatId GetStatId() const override { return TStatId(); }
+	// FTickableGameObject end
 
 public:
 	/** Initialize controller with provided data (used to override project settings) */
@@ -94,7 +102,6 @@ protected:
 	bool CheckImpressionId() const;
 
 	/** Flush showcase events */
-	UFUNCTION()
 	void FlushEvents();
 
 public:
@@ -124,6 +131,6 @@ private:
 	/** Cached showcase events to be sent in bundle */
 	TArray<FGosuShowcaseEvent> ShowcaseEvents;
 
-	/** Events flush timer handle */
-	FTimerHandle FlushTimerHandle;
+	/** Events flush time handler */
+	float FlushTimeAccumulator;
 };

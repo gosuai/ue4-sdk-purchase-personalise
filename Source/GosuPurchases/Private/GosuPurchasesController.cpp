@@ -26,6 +26,17 @@ const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://localhost:
 UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	FlushTimeAccumulator = 0.f;
+}
+
+void UGosuPurchasesController::Tick(float DeltaTime)
+{
+	FlushTimeAccumulator += DeltaTime;
+	if (FlushTimeAccumulator >= 1.f)
+	{
+		FlushEvents();
+		FlushTimeAccumulator = 0.f;
+	}
 }
 
 void UGosuPurchasesController::Initialize(UWorld* World)
@@ -46,8 +57,7 @@ void UGosuPurchasesController::Initialize(UWorld* World)
 	// Cache app id
 	AppId = Settings->AppId;
 
-	// Set flushing timer
-	World->GetTimerManager().SetTimer(FlushTimerHandle, FTimerDelegate::CreateUObject(this, &UGosuPurchasesController::FlushEvents), 1.f, true);
+	UE_LOG(LogGosuPurchases, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }
 
 void UGosuPurchasesController::RegisterSession(const FString& PlayerId)
@@ -73,7 +83,7 @@ void UGosuPurchasesController::RegisterStoreOpened()
 	// No requests, just impressionId generation
 	ImpressionId = FGuid::NewGuid();
 
-	UE_LOG(LogGosuPurchases, Log, TEXT("%s: impression registered: %s"), *VA_FUNC_LINE, *ImpressionId.ToString());
+	UE_LOG(LogGosuPurchases, Log, TEXT("%s: Impression registered: %s"), *VA_FUNC_LINE, *ImpressionId.ToString());
 }
 
 void UGosuPurchasesController::CallShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
