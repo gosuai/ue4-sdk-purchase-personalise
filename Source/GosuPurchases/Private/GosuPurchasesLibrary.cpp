@@ -114,7 +114,7 @@ TArray<FGosuRecommendedItem> UGosuPurchasesLibrary::GetRecommendedItems(UObject*
 	return TArray<FGosuRecommendedItem>();
 }
 
-bool UGosuPurchasesLibrary::GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bAppendPort)
+bool UGosuPurchasesLibrary::GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bKeepPort)
 {
 	if (!PlayerController || !PlayerController->PlayerState)
 	{
@@ -123,7 +123,7 @@ bool UGosuPurchasesLibrary::GetControllerNetworkID(APlayerController* PlayerCont
 
 	NetworkID = PlayerController->PlayerState->UniqueId->ToString();
 
-	if (!bAppendPort)
+	if (!bKeepPort)
 	{
 		FString EmptyString;
 		NetworkID.Split(FString(":"), &NetworkID, &EmptyString, ESearchCase::IgnoreCase, ESearchDir::FromEnd);

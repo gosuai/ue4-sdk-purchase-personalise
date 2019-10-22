@@ -102,6 +102,6 @@ public:
 	// Helper functions
 
 	/** Helper function to get SteamId */
-	UFUNCTION(BlueprintCallable, Category = "Online")
-	static bool GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bAppendPort = false);
+	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
+	static bool GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bKeepPort = false);
 };
