@@ -50,7 +50,7 @@ void UGosuPurchasesController::Initialize(UWorld* World)
 	World->GetTimerManager().SetTimer(FlushTimerHandle, FTimerDelegate::CreateUObject(this, &UGosuPurchasesController::FlushEvents), 1.f, true);
 }
 
-void UGosuPurchasesController::CollectSession(const FString& PlayerId)
+void UGosuPurchasesController::RegisterSession(const FString& PlayerId)
 {
 	UserID = PlayerId;
 
@@ -62,19 +62,19 @@ void UGosuPurchasesController::CollectSession(const FString& PlayerId)
 	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
 	RequestDataJson->SetStringField(TEXT("platform"), PlatformName);
 
-	const FString Url = FString::Printf(TEXT("%s/collect/%s/session"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/event/%s/session"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::CollectStoreOpened()
+void UGosuPurchasesController::CallStoreOpened()
 {
 	// No requests, just impressionId generation
 	ImpressionId = FGuid::NewGuid();
 }
 
-void UGosuPurchasesController::CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesController::CallShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (!CheckUserId() || !CheckImpressionId())
 	{
@@ -100,7 +100,7 @@ void UGosuPurchasesController::CollectShowcaseItemShow(ERecommendationScenario S
 	ShowcaseEvents.Add(Event);
 }
 
-void UGosuPurchasesController::CollectShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+void UGosuPurchasesController::CallShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
 {
 	if (!CheckUserId() || !CheckImpressionId())
 	{
@@ -119,7 +119,7 @@ void UGosuPurchasesController::CollectShowcaseItemHide(ERecommendationScenario S
 	ShowcaseEvents.Add(Event);
 }
 
-void UGosuPurchasesController::CollectItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesController::CallItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (!CheckUserId() || !CheckImpressionId())
 	{
@@ -142,13 +142,13 @@ void UGosuPurchasesController::CollectItemDetailsShow(ERecommendationScenario Sc
 	ItemDataJson->SetStringField(TEXT("description"), Description);
 	RequestDataJson->SetObjectField(TEXT("item"), ItemDataJson);
 
-	const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/preview_open"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/preview_open"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
+void UGosuPurchasesController::CallItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU)
 {
 	if (!CheckUserId() || !CheckImpressionId())
 	{
@@ -164,13 +164,13 @@ void UGosuPurchasesController::CollectItemDetailsHide(ERecommendationScenario Sc
 	RequestDataJson->SetStringField(TEXT("category"), Category);
 	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
 
-	const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/preview_close"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/preview_close"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
+void UGosuPurchasesController::CallPurchaseStarted(const FString& ItemSKU)
 {
 	if (!CheckUserId())
 	{
@@ -186,13 +186,13 @@ void UGosuPurchasesController::CollectPurchaseStarted(const FString& ItemSKU)
 	RequestDataJson->SetStringField(TEXT("eventUUID"), EventUUID.ToString());
 	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
 
-	const FString Url = FString::Printf(TEXT("%s/collect/%s/purchase_started"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/event/%s/purchase_started"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
+void UGosuPurchasesController::CallPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
 {
 	if (!CheckUserId())
 	{
@@ -210,7 +210,7 @@ void UGosuPurchasesController::CollectPurchaseCompleted(const FString& ItemSKU, 
 	RequestDataJson->SetStringField(TEXT("transaction"), TransactionID);
 	RequestDataJson->SetStringField(TEXT("status"), GetInAppPurchaseStateAsString(PurchaseState));
 
-	const FString Url = FString::Printf(TEXT("%s/collect/%s/purchase_completed"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/event/%s/purchase_completed"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->ProcessRequest();
@@ -482,7 +482,7 @@ void UGosuPurchasesController::FlushEvents()
 		RequestDataJson->SetStringField(TEXT("uid"), UserID);
 		RequestDataJson->SetArrayField(TEXT("events"), ShowEvents);
 
-		const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/show"), *GosuApiEndpoint, *AppId);
+		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/show"), *GosuApiEndpoint, *AppId);
 
 		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 		HttpRequest->ProcessRequest();
@@ -494,7 +494,7 @@ void UGosuPurchasesController::FlushEvents()
 		RequestDataJson->SetStringField(TEXT("uid"), UserID);
 		RequestDataJson->SetArrayField(TEXT("events"), HideEvents);
 
-		const FString Url = FString::Printf(TEXT("%s/collect/%s/showcase/hide"), *GosuApiEndpoint, *AppId);
+		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/hide"), *GosuApiEndpoint, *AppId);
 
 		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 		HttpRequest->ProcessRequest();

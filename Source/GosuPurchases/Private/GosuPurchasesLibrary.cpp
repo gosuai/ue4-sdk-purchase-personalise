@@ -30,67 +30,67 @@ UGosuPurchasesSettings* UGosuPurchasesLibrary::GetPurchasesSettings(UObject* Wor
 	return FGosuPurchasesModule::Get().GetSettings();
 }
 
-void UGosuPurchasesLibrary::CollectSession(UObject* WorldContextObject, const FString& PlayerId)
+void UGosuPurchasesLibrary::RegisterSession(UObject* WorldContextObject, const FString& PlayerId)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectSession(PlayerId);
+		PurchasesController->RegisterSession(PlayerId);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectStoreOpened(UObject* WorldContextObject)
+void UGosuPurchasesLibrary::CallStoreOpened(UObject* WorldContextObject)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectStoreOpened();
+		PurchasesController->CallStoreOpened();
 	}
 }
 
-void UGosuPurchasesLibrary::CollectShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesLibrary::CallShowcaseItemShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectShowcaseItemShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
+		PurchasesController->CallShowcaseItemShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
+void UGosuPurchasesLibrary::CallShowcaseItemHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectShowcaseItemHide(Scenario, StoreCategory, ItemSKU);
+		PurchasesController->CallShowcaseItemHide(Scenario, StoreCategory, ItemSKU);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
+void UGosuPurchasesLibrary::CallItemDetailsShow(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectItemDetailsShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
+		PurchasesController->CallItemDetailsShow(Scenario, StoreCategory, ItemSKU, ItemName, Price, Currency, Description);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
+void UGosuPurchasesLibrary::CallItemDetailsHide(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FString& ItemSKU)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectItemDetailsHide(Scenario, StoreCategory, ItemSKU);
+		PurchasesController->CallItemDetailsHide(Scenario, StoreCategory, ItemSKU);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectPurchaseStarted(UObject* WorldContextObject, const FString& ItemSKU)
+void UGosuPurchasesLibrary::CallPurchaseStarted(UObject* WorldContextObject, const FString& ItemSKU)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectPurchaseStarted(ItemSKU);
+		PurchasesController->CallPurchaseStarted(ItemSKU);
 	}
 }
 
-void UGosuPurchasesLibrary::CollectPurchaseCompleted(UObject* WorldContextObject, const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
+void UGosuPurchasesLibrary::CallPurchaseCompleted(UObject* WorldContextObject, const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CollectPurchaseCompleted(ItemSKU, PurchaseState, TransactionID);
+		PurchasesController->CallPurchaseCompleted(ItemSKU, PurchaseState, TransactionID);
 	}
 }
 

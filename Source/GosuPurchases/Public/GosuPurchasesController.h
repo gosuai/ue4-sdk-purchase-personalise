@@ -33,32 +33,32 @@ class GOSUPURCHASES_API UGosuPurchasesController : public UObject
 
 public:
 	/** Initialize controller with provided data (used to override project settings) */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Collect")
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events")
 	void Initialize(UWorld* World);
 
 	/** Register game session with provided player id */
-	void CollectSession(const FString& PlayerId);
+	void RegisterSession(const FString& PlayerId);
 
 	/** Generates unique impression id for futher events */
-	void CollectStoreOpened();
+	void CallStoreOpened();
 
 	/** Item is shown at store page right now  */
-	void CollectShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
+	void CallShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item was hidden at store page */
-	void CollectShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
+	void CallShowcaseItemHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
 
 	/** Item details window was shown */
-	void CollectItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
+	void CallItemDetailsShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
 
 	/** (optional) Item details window was closed */
-	void CollectItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
+	void CallItemDetailsHide(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU);
 
 	/** Player triggered purchase process for item */
-	void CollectPurchaseStarted(const FString& ItemSKU);
+	void CallPurchaseStarted(const FString& ItemSKU);
 
 	/** Purchase state was updated */
-	void CollectPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID = TEXT(""));
+	void CallPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID = TEXT(""));
 
 	/** Receive recommended items for desired scenario and store category */
 	void FetchRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
