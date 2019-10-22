@@ -21,7 +21,7 @@
 
 #define LOCTEXT_NAMESPACE "FGosuPurchasesModule"
 
-const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://localhost:3000/api/"));
+const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://localhost:3000/api"));
 
 UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -68,10 +68,12 @@ void UGosuPurchasesController::RegisterSession(const FString& PlayerId)
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::CallStoreOpened()
+void UGosuPurchasesController::RegisterStoreOpened()
 {
 	// No requests, just impressionId generation
 	ImpressionId = FGuid::NewGuid();
+
+	UE_LOG(LogGosuPurchases, Log, TEXT("%s: impression registered: %s"), *VA_FUNC_LINE, *ImpressionId.ToString());
 }
 
 void UGosuPurchasesController::CallShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description)

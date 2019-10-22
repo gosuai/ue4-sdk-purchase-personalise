@@ -40,11 +40,11 @@ void UGosuPurchasesLibrary::RegisterSession(UObject* WorldContextObject, const F
 	}
 }
 
-void UGosuPurchasesLibrary::CallStoreOpened(UObject* WorldContextObject)
+void UGosuPurchasesLibrary::RegisterStoreOpened(UObject* WorldContextObject)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->CallStoreOpened();
+		PurchasesController->RegisterStoreOpened();
 	}
 }
 

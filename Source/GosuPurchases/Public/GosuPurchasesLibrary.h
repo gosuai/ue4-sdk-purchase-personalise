@@ -33,7 +33,7 @@ public:
 
 	/** Generates unique impression id for futher events */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events", meta = (WorldContext = "WorldContextObject"))
-	static void CallStoreOpened(UObject* WorldContextObject);
+	static void RegisterStoreOpened(UObject* WorldContextObject);
 
 	/**
 	 * Item is shown at store page right now 

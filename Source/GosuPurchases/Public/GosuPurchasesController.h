@@ -40,7 +40,7 @@ public:
 	void RegisterSession(const FString& PlayerId);
 
 	/** Generates unique impression id for futher events */
-	void CallStoreOpened();
+	void RegisterStoreOpened();
 
 	/** Item is shown at store page right now  */
 	void CallShowcaseItemShow(ERecommendationScenario Scenario, const FString& Category, const FString& ItemSKU, const FString& ItemName, float Price, const FString& Currency, const FString& Description = TEXT("(optional)"));
