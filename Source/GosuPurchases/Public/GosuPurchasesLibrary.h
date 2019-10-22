@@ -86,13 +86,13 @@ public:
 	static void CollectPurchaseCompleted(UObject* WorldContextObject, const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID = TEXT(""));
 
 	/**
-	 * Receive recommended items for desired scenario and store category
+	 * Fetch recommended items from GOSU server for desired scenario and store category
 	 *
 	 * @param Scenario 
 	 * @param Category (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Receive", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "SuccessCallback"))
-	static void ReceiveRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback);
+	static void FetchRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback);
 
 	/** Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))

@@ -94,11 +94,11 @@ void UGosuPurchasesLibrary::CollectPurchaseCompleted(UObject* WorldContextObject
 	}
 }
 
-void UGosuPurchasesLibrary::ReceiveRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback)
+void UGosuPurchasesLibrary::FetchRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		PurchasesController->ReceiveRecommendations(Scenario, StoreCategory, SuccessCallback);
+		PurchasesController->FetchRecommendations(Scenario, StoreCategory, SuccessCallback);
 	}
 }
 
