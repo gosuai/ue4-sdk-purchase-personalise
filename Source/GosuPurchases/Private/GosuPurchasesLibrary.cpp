@@ -8,6 +8,8 @@
 #include "GosuPurchasesSettings.h"
 
 #include "Engine/Engine.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/KismetTextLibrary.h"
 
 UGosuPurchasesLibrary::UGosuPurchasesLibrary(const FObjectInitializer& ObjectInitializer)
@@ -110,4 +112,22 @@ TArray<FGosuRecommendedItem> UGosuPurchasesLibrary::GetRecommendedItems(UObject*
 	}
 
 	return TArray<FGosuRecommendedItem>();
+}
+
+bool UGosuPurchasesLibrary::GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bAppendPort)
+{
+	if (!PlayerController || !PlayerController->PlayerState)
+	{
+		return false;
+	}
+
+	NetworkID = PlayerController->PlayerState->UniqueId->ToString();
+
+	if (!bAppendPort)
+	{
+		FString EmptyString;
+		NetworkID.Split(FString(":"), &NetworkID, &EmptyString, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+	}
+
+	return true;
 }

@@ -97,4 +97,11 @@ public:
 	/** Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
 	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Helper functions
+
+	/** Helper function to get SteamId */
+	UFUNCTION(BlueprintCallable, Category = "Online")
+	static bool GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bAppendPort = false);
 };
