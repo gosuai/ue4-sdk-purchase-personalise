@@ -12,6 +12,7 @@
 
 #include "GosuPurchasesController.generated.h"
 
+class APlayerController;
 class FJsonObject;
 struct FGuid;
 
@@ -41,12 +42,19 @@ protected:
 
 public:
 	/** Initialize controller with provided data (used to override project settings) */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events")
 	void Initialize(UWorld* World);
 
 	/** Register game session with provided player id */
-	void RegisterSession(const FString& PlayerId);
+	void RegisterSession(APlayerController* PlayerController, const FString& PlayerId);
 
+	/** Register game session while using SteamOnlineSubsystem */
+	void RegisterSteamSession(APlayerController* PlayerController);
+
+protected:
+	/** Sessions is started with PlayerId  */
+	void CallRegisterSession(const FString& PlayerId);
+
+public:
 	/** Generates unique impression id for futher events */
 	void RegisterStoreOpened();
 

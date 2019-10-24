@@ -29,7 +29,11 @@ public:
 
 	/** Register game session with provided player id */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events", meta = (WorldContext = "WorldContextObject"))
-	static void RegisterSession(UObject* WorldContextObject, const FString& PlayerId);
+	static void RegisterSession(UObject* WorldContextObject, APlayerController* PlayerController, const FString& PlayerId);
+
+	/** Register game session while using SteamOnlineSubsystem */
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events", meta = (WorldContext = "WorldContextObject"))
+	static void RegisterSteamSession(UObject* WorldContextObject, APlayerController* PlayerController);
 
 	/** Generates unique impression id for futher events */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Events", meta = (WorldContext = "WorldContextObject"))
@@ -101,7 +105,18 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions
 
-	/** Helper function to get SteamId */
+	/** Helper function to get unique network id */
 	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
 	static bool GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bKeepPort = false);
+
+	/** Helper function to get unique player id from Online Subsystem */
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Tools")
+	static bool GetUniquePlayerId(APlayerController* PlayerController, FString& PlayerId);
+
+	/** Helper function for easy C++ usage */
+	static FString GetUniquePlayerId(APlayerController* PlayerController);
+
+	/** Check is SteamOnlineSubsystem enabled */
+	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
+	static bool IsSteamEnabled();
 };

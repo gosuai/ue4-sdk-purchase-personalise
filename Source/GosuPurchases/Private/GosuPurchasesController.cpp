@@ -6,6 +6,7 @@
 #include "GosuPurchases.h"
 #include "GosuPurchasesDataModel.h"
 #include "GosuPurchasesDefines.h"
+#include "GosuPurchasesLibrary.h"
 #include "GosuPurchasesSave.h"
 #include "GosuPurchasesSettings.h"
 
@@ -17,6 +18,7 @@
 #include "Misc/Guid.h"
 #include "Misc/SecureHash.h"
 #include "Modules/ModuleManager.h"
+#include "Online.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "FGosuPurchasesModule"
@@ -60,12 +62,35 @@ void UGosuPurchasesController::Initialize(UWorld* World)
 	UE_LOG(LogGosuPurchases, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }
 
-void UGosuPurchasesController::RegisterSession(const FString& PlayerId)
+void UGosuPurchasesController::RegisterSession(APlayerController* PlayerController, const FString& PlayerId)
 {
+	if (IOnlineSubsystem::IsEnabled(STEAM_SUBSYSTEM))
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: SteamOnlineSubsystem is enabled: forcing to register Steam session"), *VA_FUNC_LINE);
+		RegisterSteamSession(PlayerController);
+		return;
+	}
+
+	CallRegisterSession(PlayerId);
+}
+
+void UGosuPurchasesController::RegisterSteamSession(APlayerController* PlayerController)
+{
+	CallRegisterSession(UGosuPurchasesLibrary::GetUniquePlayerId(PlayerController));
+}
+
+void UGosuPurchasesController::CallRegisterSession(const FString& PlayerId)
+{
+	if (PlayerId.IsEmpty())
+	{
+		UE_LOG(LogGosuPurchases, Error, TEXT("%s: Can't register session with empty PlayerId"), *VA_FUNC_LINE);
+		return;
+	}
+
 	UserID = PlayerId;
 
 	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
-	FString PlatformName = UGameplayStatics::GetPlatformName();
+	FString PlatformName = IOnlineSubsystem::GetLocalPlatformName();
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
