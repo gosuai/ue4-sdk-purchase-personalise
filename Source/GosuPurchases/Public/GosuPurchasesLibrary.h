@@ -116,6 +116,9 @@ public:
 	/** Helper function for easy C++ usage */
 	static FString GetUniquePlayerId(APlayerController* PlayerController);
 
+	/** Helper function to get unique local net id */
+	static FString GetUniqueNetId();
+
 	/** Check is SteamOnlineSubsystem enabled */
 	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
 	static bool IsSteamEnabled();

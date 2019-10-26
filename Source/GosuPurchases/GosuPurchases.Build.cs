@@ -25,6 +25,7 @@ public class GosuPurchases : ModuleRules
             {
                 "CoreUObject",
                 "Engine",
+                "Sockets",
             }
             );
 

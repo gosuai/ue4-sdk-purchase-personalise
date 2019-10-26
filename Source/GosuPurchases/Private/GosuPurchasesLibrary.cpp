@@ -13,6 +13,7 @@
 #include "GameFramework/PlayerState.h"
 #include "Kismet/KismetTextLibrary.h"
 #include "Online.h"
+#include "SocketSubsystem.h"
 
 UGosuPurchasesLibrary::UGosuPurchasesLibrary(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -190,6 +191,19 @@ FString UGosuPurchasesLibrary::GetUniquePlayerId(APlayerController* PlayerContro
 	}
 
 	return FString();
+}
+
+FString UGosuPurchasesLibrary::GetUniqueNetId()
+{
+	FString HostName;
+	if (!ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetHostName(HostName))
+	{
+		bool bCanBindAll;
+		TSharedPtr<class FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(*GLog, bCanBindAll);
+		HostName = Addr->ToString(false);
+	}
+
+	return FString::Printf(TEXT("%s-%s"), *HostName, *FPlatformMisc::GetLoginId().ToUpper());
 }
 
 bool UGosuPurchasesLibrary::IsSteamEnabled()

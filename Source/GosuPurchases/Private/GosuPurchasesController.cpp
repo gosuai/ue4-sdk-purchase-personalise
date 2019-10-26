@@ -23,7 +23,7 @@
 
 #define LOCTEXT_NAMESPACE "FGosuPurchasesModule"
 
-const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://localhost:3000/api"));
+const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://stormy-depths-03783.herokuapp.com/api/v1"));
 
 UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -94,6 +94,7 @@ void UGosuPurchasesController::CallRegisterSession(const FString& PlayerId)
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
 	RequestDataJson->SetStringField(TEXT("platform"), PlatformName);
 
@@ -165,6 +166,7 @@ void UGosuPurchasesController::CallItemDetailsShow(ERecommendationScenario Scena
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 	RequestDataJson->SetStringField(TEXT("impressionId"), ImpressionId.ToString());
 	RequestDataJson->SetStringField(TEXT("eventUUID"), FGuid::NewGuid().ToString());
 	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
@@ -194,6 +196,7 @@ void UGosuPurchasesController::CallItemDetailsHide(ERecommendationScenario Scena
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 	RequestDataJson->SetStringField(TEXT("impressionId"), ImpressionId.ToString());
 	RequestDataJson->SetStringField(TEXT("eventUUID"), FGuid::NewGuid().ToString());
 	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
@@ -219,6 +222,7 @@ void UGosuPurchasesController::CallPurchaseStarted(const FString& ItemSKU)
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
 	RequestDataJson->SetStringField(TEXT("eventUUID"), EventUUID.ToString());
 	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
@@ -241,6 +245,7 @@ void UGosuPurchasesController::CallPurchaseCompleted(const FString& ItemSKU, EIn
 
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
 	RequestDataJson->SetStringField(TEXT("eventUUID"), EventUUID.ToString());
 	RequestDataJson->SetStringField(TEXT("sku"), ItemSKU);
@@ -517,6 +522,7 @@ void UGosuPurchasesController::FlushEvents()
 	{
 		TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 		RequestDataJson->SetStringField(TEXT("uid"), UserID);
+		RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 		RequestDataJson->SetArrayField(TEXT("events"), ShowEvents);
 
 		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/show"), *GosuApiEndpoint, *AppId);
@@ -529,6 +535,7 @@ void UGosuPurchasesController::FlushEvents()
 	{
 		TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 		RequestDataJson->SetStringField(TEXT("uid"), UserID);
+		RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
 		RequestDataJson->SetArrayField(TEXT("events"), HideEvents);
 
 		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/hide"), *GosuApiEndpoint, *AppId);
