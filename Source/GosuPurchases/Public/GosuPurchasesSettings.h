@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
-
 #include "GosuPurchasesSettings.generated.h"
 
 UCLASS(config = Engine, defaultconfig)
