@@ -258,11 +258,18 @@ void UGosuPurchasesController::CallPurchaseCompleted(const FString& ItemSKU, EIn
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuPurchasesController::FetchRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback)
+void UGosuPurchasesController::FetchRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback, int32 MaxItems)
 {
-	const FString Url = FString::Printf(TEXT("%s/recommend/%s/store/%s?category=%s"), *GosuApiEndpoint, *AppId, *UserID, *Category);
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), UserID);
+	RequestDataJson->SetStringField(TEXT("netId"), UGosuPurchasesLibrary::GetUniqueNetId());
+	RequestDataJson->SetStringField(TEXT("scenario"), GetScenarioAsString(Scenario));
+	RequestDataJson->SetStringField(TEXT("category"), Category);
+	RequestDataJson->SetNumberField(TEXT("maxItems"), MaxItems);
 
-	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, FString(), ERequestVerb::GET);
+	const FString Url = FString::Printf(TEXT("%s/recommend/%s/purchases"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::FetchRecommendations_HttpRequestComplete, SuccessCallback);
 	HttpRequest->ProcessRequest();
 }
@@ -291,6 +298,7 @@ void UGosuPurchasesController::FetchRecommendations_HttpRequestComplete(FHttpReq
 
 	Recommendations.Add(Recommendation.scenario, Recommendation);
 	SaveData();
+	OnFetchRecommendation.Broadcast(Recommendation);
 
 	FString ResponseStr = HttpResponse->GetContentAsString();
 	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);

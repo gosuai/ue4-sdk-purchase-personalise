@@ -24,6 +24,7 @@ enum class ERequestVerb : uint8
 	POST
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFetchRecommendation, const FGosuRecommendation&, Recommendation);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceiveRecommendation, const FGosuRecommendation&, Recommendation);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnRequestError, int32, StatusCode, const FString&, ErrorMessage);
 
@@ -76,8 +77,8 @@ public:
 	/** Purchase state was updated */
 	void CallPurchaseCompleted(const FString& ItemSKU, EInAppPurchaseState::Type PurchaseState, const FString& TransactionID = TEXT(""));
 
-	/** Receive recommended items for desired scenario and store category */
-	void FetchRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback);
+	/** Receive recommended items for desired scenario and store category, limited with MaxItems cap */
+	void FetchRecommendations(ERecommendationScenario Scenario, const FString& Category, const FOnReceiveRecommendation& SuccessCallback, int32 MaxItems = 20);
 
 protected:
 	void FetchRecommendations_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceiveRecommendation SuccessCallback);
@@ -115,6 +116,10 @@ protected:
 public:
 	/** Get recommendated items for desired category */
 	TArray<FGosuRecommendedItem> GetRecommendedItems(ERecommendationScenario Scenario) const;
+
+	/** Event occured when recommended items were fetched */
+	UPROPERTY(BlueprintAssignable, Category = "GOSU|Purchases|Callback")
+	FOnFetchRecommendation OnFetchRecommendation;
 
 protected:
 	/** Cached recommendations storage */

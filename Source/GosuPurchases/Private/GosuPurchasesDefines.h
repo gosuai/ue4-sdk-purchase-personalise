@@ -16,3 +16,5 @@ DECLARE_LOG_CATEGORY_EXTERN(LogGosuPurchases, Log, All);
 #define VA_FUNC_LINE (VA_FUNC + "(" + VA_LINE + ")") // Current Class and Line Number where this is called!
 
 #define GOSU_PURCHASES_VERSION TEXT("v1.0-a1")
+
+#define GOSU_DEFAULT_RECOMMENDATION_SIZE 20

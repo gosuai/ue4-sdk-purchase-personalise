@@ -21,6 +21,7 @@ class GOSUPURCHASES_API UGosuPurchasesLibrary : public UBlueprintFunctionLibrary
 
 public:
 	/** Direct access to purchases controller */
+	UFUNCTION(BlueprintPure, Category = "GOSU|Purchases", meta = (WorldContext = "WorldContextObject"))
 	static UGosuPurchasesController* GetPurchasesController(UObject* WorldContextObject);
 
 	/** Direct access to purchases settings */
@@ -96,11 +97,11 @@ public:
 	 * @param Category (optional) 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Receive", meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "SuccessCallback"))
-	static void FetchRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback);
+	static void FetchRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback, int32 MaxItems = 20);
 
-	/** Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data) */
+	/** Get cached recommended items for desired category limited with MaxItems param (call ReceiveRecommendations to have fresh data) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
-	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario);
+	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario = ERecommendationScenario::Recommended);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Helper functions
