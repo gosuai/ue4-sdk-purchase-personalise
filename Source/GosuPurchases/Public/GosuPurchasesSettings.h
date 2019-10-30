@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
+
 #include "GosuPurchasesSettings.generated.h"
 
 UCLASS(config = Engine, defaultconfig)
