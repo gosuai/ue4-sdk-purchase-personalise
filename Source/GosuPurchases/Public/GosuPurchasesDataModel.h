@@ -127,5 +127,6 @@ public:
 	TArray<FGosuRecommendedItem> items;
 
 public:
-	FGosuRecommendation(){};
+	FGosuRecommendation()
+		: scenario(ERecommendationScenario::Default){};
 };
