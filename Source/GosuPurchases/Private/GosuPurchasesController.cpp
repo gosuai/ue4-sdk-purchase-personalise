@@ -555,6 +555,11 @@ void UGosuPurchasesController::FlushEvents()
 
 TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const
 {
+	if (Recommendations.Contains(Scenario))
+	{
+		return Recommendations.FindChecked(Scenario).items;
+	}
+
 	return TArray<FGosuRecommendedItem>();
 }
 

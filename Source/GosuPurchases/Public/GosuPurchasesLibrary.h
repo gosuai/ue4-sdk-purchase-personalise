@@ -101,7 +101,7 @@ public:
 	static void FetchRecommendations(UObject* WorldContextObject, ERecommendationScenario Scenario, const FString& StoreCategory, const FOnReceiveRecommendation& SuccessCallback, int32 MaxItems = 20);
 
 	/** Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data) */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintPure, Category = "GOSU|Purchases|Data", meta = (WorldContext = "WorldContextObject"))
 	static TArray<FGosuRecommendedItem> GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario = ERecommendationScenario::Recommended);
 
 	//////////////////////////////////////////////////////////////////////////
