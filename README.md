@@ -67,8 +67,157 @@ Pro tip: useful tactic is to setup recommended tab as a default tab (when player
 * connect `get predictions` function with UMG and enjoy providing your players with personalised shopping experience
 
 
-## demo:
-text
+## Setting up Events Processing
+
+Events are key actions that triggered during the store browsing and making in-app purchasing processes.
+
+![docs_001_all](Documentation/docs_001_all.png)
+
+Processing of events is already set up in the plugin demo. You can use it as integration example:
+
+* Load your project and open **Gosu Content** > **Demo** > **W_Demo** to view demo store blueprint. Follow the **green** comment blocks.
+* Open level **Gosu Content** > **Maps** > **Demo** to launch the demo.
+
+If you could not find the files mentioned above in Unreal Editor, go to **View Options** and mark the **Show Plugin Content** checkbox.
+
+
+
+## GOSU SDK Nodes
+
+### RegisterSession **(required)**
+
+Register game session with provided player id.
+
+![docs_002_register](Documentation/docs_002_register.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|PlayerController|APlayerController|Player controller instance|
+|PlayerId|string|Unique player ID you're using to authenicate user|
+
+
+### RegisterSteamSession **(required for Steam only)**
+
+Register game session while using SteamOnlineSubsystem.
+
+![docs_003_steam](Documentation/docs_003_steam.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|PlayerController|APlayerController|Player controller instance|
+
+
+### RegisterStoreOpened **(required)**
+
+Generates unique impression id for futher events.
+
+![docs_006_store_opened](Documentation/docs_006_store_opened.png)
+
+
+### CallShowcaseItemShow **(required)**
+
+Item is shown at store page right now.
+
+![docs_007_showcase_open](Documentation/docs_007_showcase_open.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|string|Scenario alreay applied to show item|
+|Category|string|Store category for item|
+|ItemSKU|string|Unique item identifier|
+|ItemName|string|Item name in store|
+|Price|float|Item price|
+|Currency|string|Applied currency|
+|Description|string|(optional) Human-readable item description|
+
+
+### CallShowcaseItemHide **(optional)**
+
+Item was hidden at store page.
+
+![docs_008_showcase_hide](Documentation/docs_008_showcase_hide.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|string|Scenario alreay applied to show item|
+|Category|string|Store category for item|
+|ItemSKU|string|Unique item identifier|
+
+
+### CallItemDetailsShow **(required)**
+
+Item details window was shown.
+
+![docs_010_details_show](Documentation/docs_010_details_show.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|enum|Scenario alreay applied to show item|
+|Category|string|Store category for item|
+|ItemSKU|string|Unique item identifier|
+|ItemName|string|Item name in store|
+|Price|float|Item price|
+|Currency|string|Applied currency|
+|Description|string|(optional) Human-readable item description|
+
+
+### CallItemDetailsHide **(optional)**
+
+Item details window was closed.
+
+![docs_011_details_hide](Documentation/docs_011_details_hide.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|enum|Scenario alreay applied to show item|
+|Category|string|Store category for item|
+|ItemSKU|string|Unique item identifier|
+
+
+### CallPurchaseStarted **(required)**
+
+Player triggered purchase process for item.
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|ItemSKU|string|Unique item identifier|
+
+
+### CallPurchaseCompleted **(required)**
+
+Purchase state was updated.
+
+![docs_010_details_show](Documentation/docs_010_details_show.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|ItemSKU|string|Unique item identifier|
+|PurchaseState|enum|Purchase state provided as EInAppPurchaseState enum|
+|TransactionID|string|Unique store transaction id|
+
+
+### FetchRecommendations **(required)**
+
+Fetch recommended items from GOSU server for desired scenario and store category. Asyn functions that should be started after session registration event.
+
+![docs_004_fetch_recs](Documentation/docs_004_fetch_recs.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|enum|Desired scenario|
+|StoreCategory|string|(optional) Desired category for Highlight scenario|
+|MaxItems|int32|Limit recommendation size with provided number of items|
+
+
+### GetRecommendedItems
+
+Get cached recommended items for desired category (call ReceiveRecommendations to have fresh data).
+
+![docs_005_get_recs](Documentation/docs_005_get_recs.png)
+
+| Name   | Type | Description           |
+| :---   | :--- | :---                  |
+|Scenario|enum|Desired scenario|
 
 
 ## install and setup
