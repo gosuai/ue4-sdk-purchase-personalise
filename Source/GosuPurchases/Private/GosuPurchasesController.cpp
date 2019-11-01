@@ -416,10 +416,8 @@ TSharedRef<IHttpRequest> UGosuPurchasesController::CreateHttpRequest(const FStri
 	// Authorization
 	if (!SecretKey.IsEmpty())
 	{
-		uint8 HMACHash[20];
-		FSHA1::HMACBuffer(*SecretKey, SecretKey.Len(), *BodyContent, BodyContent.Len(), HMACHash);
-		FString RequestHash = FBase64::Encode(HMACHash, ARRAY_COUNT(HMACHash));
-		HttpRequest->SetHeader(TEXT("Authorization"), RequestHash);
+		FString RequestHash = FMD5::HashAnsiString(*(BodyContent + SecretKey));
+		HttpRequest->SetHeader(TEXT("Authorization"), FBase64::Encode(RequestHash));
 	}
 	else
 	{
