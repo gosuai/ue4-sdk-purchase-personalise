@@ -20,24 +20,23 @@
 * Unreal Engine 4.22+
 * win 7 (or higher) or macos 10.9.2 (or higher)
 * Visual Studio 2017 (or higher) or XCode 10.1 (or higher)
-* Make sure to acquire API credentials before going live with the plugin. You will need `app_id` and `secret_key`. [Do this for now](mailto:slava.smirnov@gosu.ai) to receive them.
+* Make sure to acquire API credentials before going live with the plugin. You will need `app_id` and `secret_key`. [Visit website](platform.gosu.ai){:target="_blank"}
+ to receive them.
 
 
 ## platforms supported:
 initial release:
-* `Steam`
-* `Epic Games Store`
-* `Google Play`
-* `iOS`
-
-coming soon:
-* ps4
-* xbox
-* switch
+* Steam
+* Epic Games Store
+* Google Play
+* iOS
+* PS4
+* XBOX
+* Switch
 
 
-## how it works:
-GosuAI Purchase Personalisation receives players' data (e.g. player_id, platform, sessions and in-shop behaviour), expects per `player_id` prediction request and provides a list of in-game shop items (with their categories) sorted by probability purchase for that particular `player_id`. Resulted list of personalised items is therefore available for preferred scenario.
+## how real-time personalisation works:
+SDK connects to players' in-shop behaviour and expects per player_id recommendation request. Gosu.ai Personalisation Service now builds, chooses and updates your game recommendation models. Service provides a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new content becomes available there's no need to do anything, SDK will pick it up automatically
 
 
 ## most used scenarios:
