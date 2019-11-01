@@ -101,6 +101,7 @@ void UGosuPurchasesController::CallRegisterSession(const FString& PlayerId)
 	const FString Url = FString::Printf(TEXT("%s/event/%s/session"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -184,6 +185,7 @@ void UGosuPurchasesController::CallItemDetailsShow(ERecommendationScenario Scena
 	const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/preview_open"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -207,6 +209,7 @@ void UGosuPurchasesController::CallItemDetailsHide(ERecommendationScenario Scena
 	const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/preview_close"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -230,6 +233,7 @@ void UGosuPurchasesController::CallPurchaseStarted(const FString& ItemSKU)
 	const FString Url = FString::Printf(TEXT("%s/event/%s/purchase_started"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -255,6 +259,7 @@ void UGosuPurchasesController::CallPurchaseCompleted(const FString& ItemSKU, EIn
 	const FString Url = FString::Printf(TEXT("%s/event/%s/purchase_completed"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -272,6 +277,17 @@ void UGosuPurchasesController::FetchRecommendations(ERecommendationScenario Scen
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::FetchRecommendations_HttpRequestComplete, SuccessCallback);
 	HttpRequest->ProcessRequest();
+}
+
+void UGosuPurchasesController::CallEvent_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded)
+{
+	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
+	{
+		return;
+	}
+
+	FString ResponseStr = HttpResponse->GetContentAsString();
+	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
 }
 
 void UGosuPurchasesController::FetchRecommendations_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceiveRecommendation SuccessCallback)
@@ -534,6 +550,7 @@ void UGosuPurchasesController::FlushEvents()
 		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/show"), *GosuApiEndpoint, *AppId);
 
 		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+		HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 		HttpRequest->ProcessRequest();
 	}
 
@@ -547,6 +564,7 @@ void UGosuPurchasesController::FlushEvents()
 		const FString Url = FString::Printf(TEXT("%s/event/%s/showcase/hide"), *GosuApiEndpoint, *AppId);
 
 		TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+		HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuPurchasesController::CallEvent_HttpRequestComplete);
 		HttpRequest->ProcessRequest();
 	}
 }
