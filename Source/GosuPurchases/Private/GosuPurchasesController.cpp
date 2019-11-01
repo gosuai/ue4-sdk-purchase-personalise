@@ -297,6 +297,9 @@ void UGosuPurchasesController::FetchRecommendations_HttpRequestComplete(FHttpReq
 		return;
 	}
 
+	FString ResponseStr = HttpResponse->GetContentAsString();
+	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
+
 	TSharedPtr<FJsonObject> JsonObject;
 	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*HttpResponse->GetContentAsString());
 	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
@@ -315,9 +318,6 @@ void UGosuPurchasesController::FetchRecommendations_HttpRequestComplete(FHttpReq
 	Recommendations.Add(Recommendation.scenario, Recommendation);
 	SaveData();
 	OnFetchRecommendation.Broadcast(Recommendation);
-
-	FString ResponseStr = HttpResponse->GetContentAsString();
-	UE_LOG(LogGosuPurchases, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
 
 	SuccessCallback.ExecuteIfBound(Recommendation);
 }
