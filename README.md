@@ -12,7 +12,7 @@
 ***
 **GosuAI Purchase Personalisation SDK** enables Unreal Engine developer to personalise player's in-game shopping experience.
 
-![statusIcon](https://teamcity.ufna.dev/app/rest/builds/buildType:(id:GosuAi_ClangFormatCheck)/statusIcon.svg)
+[![statusIcon](https://teamcity.ufna.dev/app/rest/builds/buildType:(id:GosuAi_ClangFormatCheck)/statusIcon.svg)](https://teamcity.ufna.dev/viewType.html?buildTypeId=GosuAi_ClangFormatCheck&guest=1)
 
 ***
 
