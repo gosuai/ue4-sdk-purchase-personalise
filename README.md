@@ -1,16 +1,18 @@
 # contents:
+* [intro](#intro)
 * [prerequisites](#prerequisites)
 * [platforms supported](#platforms-supported)
 * [how it works](#how-it-works)
 * [most used scenarios](#most-used-scenarios) 
 * [how to use](#how-to-use)
-* [demo](#demo)
-* [install and setup](#install-and-setup)
-* [ue4 nodes and data](#ue4-nodes-and-data)
+* [setting up](#setting-up)
 
 
 ***
-**GosuAI Purchase Personalisation SDK** enables Unreal Engine developer to personalise player's in-game shopping experience.
+
+## intro:
+
+**GosuAI Purchase Personalisation SDK** enables Unreal Engine developer to personalise player's in-game shopping experience and grow in-game revenue.
 
 [![statusIcon](https://teamcity.ufna.dev/app/rest/builds/buildType:(id:GosuAi_ClangFormatCheck)/statusIcon.svg)](https://teamcity.ufna.dev/viewType.html?buildTypeId=GosuAi_ClangFormatCheck&guest=1)
 
@@ -20,12 +22,10 @@
 * Unreal Engine 4.22+
 * win 7 (or higher) or macos 10.9.2 (or higher)
 * Visual Studio 2017 (or higher) or XCode 10.1 (or higher)
-* Make sure to acquire API credentials before going live with the plugin. You will need `app_id` and `secret_key`. [Visit website](platform.gosu.ai){:target="_blank"}
- to receive them.
+* Make sure to recieve your credentials before using the plugin. You will need `app_id`, `secret_key`, `dev_secret_key`. [Visit website](http://platform.gosu.ai) to receive them.
 
 
 ## platforms supported:
-initial release:
 * Steam
 * Epic Games Store
 * Google Play
@@ -35,8 +35,8 @@ initial release:
 * Switch
 
 
-## how real-time personalisation works:
-SDK connects to players' in-shop behaviour and expects per player_id recommendation request. Gosu.ai Personalisation Service now builds, chooses and updates your game recommendation models. Service provides a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new content becomes available there's no need to do anything, SDK will pick it up automatically
+## how it works:
+SDK connects to players' in-shop behaviour and expects per `player_id` recommendation request. Gosu.ai Personalisation Service now builds, chooses and updates your game recommendation models. SDK fetches a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new items become available there's no need to do anything special, SDK will pick them up automatically
 
 
 ## most used scenarios:
@@ -56,7 +56,7 @@ Pro tip: useful tactic is to setup recommended tab as a default tab (when player
 
 ## how to use:
 * install plugin with github or [UE4 marketplace](https://www.unrealengine.com/marketplace/en-US/store) (preferred)
-* acquire gosu.ai credentials [here](mailto:slava.smirnov@gosu.ai)
+* acquire gosu.ai credentials [here](http://platform.gosu.ai)
 * pick 1 of 3 scenarios you would use personalised recommendations for:
   * recommended tab with items
   * highlight recommended item
@@ -64,23 +64,27 @@ Pro tip: useful tactic is to setup recommended tab as a default tab (when player
 * make sure you have design layouts (UMG) being prepared for scenario
 * setup plugin:
   * submit credentials at plugin settings (this is critical before going live)
-  * make sure you have setup all the data
-  * receive personalised items (filter some categories if needed)
-* connect `get predictions` function with UMG and enjoy providing your players with personalised shopping experience
+  * make sure you have set up functions
+  * receive personalised items
+  * enjoy
 
+## setting up
 
-## Setting up Events Processing
+Basic principle is this:
+* developer calls for session registration, item show/hide, item details show/hide (if applicable) and purchase initiation/completion
+* developer calls to get recommendation. SDK now fetches recommendations from gosu servers and caches them within a client
+* they are now available for desired scenario
 
-Events are key actions that triggered during the store browsing and making in-app purchasing processes.
+Events are key actions which are triggered during the store browsing and in-app purchasing process.
 
 ![docs_001_all](Documentation/docs_001_all.png)
 
-Processing of events is already set up in the plugin demo. You can use it as integration example:
+Plugin demo already contains an example for the store and processing of events. You can use it as an integration example:
 
 * Load your project and open **Gosu Content** > **Demo** > **W_Demo** to view demo store blueprint. Follow the **green** comment blocks.
 * Open level **Gosu Content** > **Maps** > **Demo** to launch the demo.
 
-If you could not find the files mentioned above in Unreal Editor, go to **View Options** and mark the **Show Plugin Content** checkbox.
+If you could not find the files mentioned above in Unreal Editor, go for **View Options** and mark the **Show Plugin Content** checkbox.
 
 
 
@@ -220,12 +224,3 @@ Get cached recommended items for desired category (call ReceiveRecommendations t
 | Name   | Type | Description           |
 | :---   | :--- | :---                  |
 |Scenario|enum|Desired scenario|
-
-
-## install and setup
-* text for marketplace
-* text for github
-
-
-## ue4 nodes and data
-describe nodes and their parameters
