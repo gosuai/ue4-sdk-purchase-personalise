@@ -204,7 +204,7 @@ Purchase state was updated.
 
 ### FetchRecommendations **(required)**
 
-Fetch recommended items from GOSU server for desired scenario and store category. Asyn functions that should be started after session registration event.
+Fetch recommended items from GOSU server for desired scenario and store category. These items are now cached within a current game session. Asyn functions that should be started after session registration event.
 
 ![docs_004_fetch_recs](Documentation/docs_004_fetch_recs.png)
 
