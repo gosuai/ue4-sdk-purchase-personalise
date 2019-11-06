@@ -84,7 +84,7 @@ Plugin demo already contains an example for the store and processing of events. 
 * Load your project and open **Gosu Content** > **Demo** > **W_Demo** to view demo store blueprint. Follow the **green** comment blocks.
 * Open level **Gosu Content** > **Maps** > **Demo** to launch the demo.
 
-If you could not find the files mentioned above in Unreal Editor, go for **View Options** and mark the **Show Plugin Content** checkbox.
+If you could not find the files mentioned above in Unreal Editor, go for **View Options** and mark the **Show Plugin/Engine Content** checkbox.
 
 
 
