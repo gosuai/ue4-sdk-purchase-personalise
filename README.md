@@ -133,7 +133,7 @@ Item is shown at store page right now.
 |ItemSKU|string|Unique item identifier|
 |ItemName|string|Item name in store|
 |Price|float|Item price|
-|Currency|string|Applied currency|
+|Currency|string|Applied currency. Currency code or in-game currency name are expected|
 |Description|string|(optional) Human-readable item description|
 
 
@@ -163,7 +163,7 @@ Item details window was shown.
 |ItemSKU|string|Unique item identifier|
 |ItemName|string|Item name in store|
 |Price|float|Item price|
-|Currency|string|Applied currency|
+|Currency|string|Applied currency. Currency code or in-game currency name are expected|
 |Description|string|(optional) Human-readable item description|
 
 
