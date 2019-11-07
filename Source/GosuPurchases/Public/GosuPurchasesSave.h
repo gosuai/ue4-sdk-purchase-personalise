@@ -17,10 +17,10 @@ struct GOSUPURCHASES_API FGosuPurchasesSaveData
 
 	/** Latest recommendations storage */
 	UPROPERTY()
-	TMap<ERecommendationScenario, FGosuRecommendation> Recommendations;
+	TArray<FGosuRecommendation> Recommendations;
 
 	FGosuPurchasesSaveData(){};
-	FGosuPurchasesSaveData(TMap<ERecommendationScenario, FGosuRecommendation> InRecommendations)
+	FGosuPurchasesSaveData(TArray<FGosuRecommendation> InRecommendations)
 		: Recommendations(InRecommendations){};
 };
 

@@ -315,7 +315,19 @@ void UGosuPurchasesController::FetchRecommendations_HttpRequestComplete(FHttpReq
 		return;
 	}
 
-	Recommendations.Add(Recommendation.scenario, Recommendation);
+	auto RecommendationPtr = Recommendations.FindByPredicate([Recommendation](const FGosuRecommendation& InRecommendation) {
+		return InRecommendation.scenario == Recommendation.scenario && InRecommendation.category == Recommendation.category;
+	});
+
+	if (RecommendationPtr)
+	{
+		RecommendationPtr->items = Recommendation.items;
+	}
+	else
+	{
+		Recommendations.Add(Recommendation);
+	}
+
 	SaveData();
 	OnFetchRecommendation.Broadcast(Recommendation);
 
@@ -569,11 +581,15 @@ void UGosuPurchasesController::FlushEvents()
 	}
 }
 
-TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario) const
+TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(ERecommendationScenario Scenario, const FString& StoreCategory) const
 {
-	if (Recommendations.Contains(Scenario))
+	auto RecommendationPtr = Recommendations.FindByPredicate([&](const FGosuRecommendation& InRecommendation) {
+		return InRecommendation.scenario == Scenario && InRecommendation.category == StoreCategory;
+	});
+
+	if (RecommendationPtr)
 	{
-		return Recommendations.FindChecked(Scenario).items;
+		return RecommendationPtr->items;
 	}
 
 	return TArray<FGosuRecommendedItem>();

@@ -115,11 +115,11 @@ void UGosuPurchasesLibrary::FetchRecommendations(UObject* WorldContextObject, ER
 	}
 }
 
-TArray<FGosuRecommendedItem> UGosuPurchasesLibrary::GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario)
+TArray<FGosuRecommendedItem> UGosuPurchasesLibrary::GetRecommendedItems(UObject* WorldContextObject, ERecommendationScenario Scenario, FString StoreCategory)
 {
 	if (auto PurchasesController = UGosuPurchasesLibrary::GetPurchasesController(WorldContextObject))
 	{
-		return PurchasesController->GetRecommendedItems(Scenario);
+		return PurchasesController->GetRecommendedItems(Scenario, StoreCategory);
 	}
 
 	return TArray<FGosuRecommendedItem>();

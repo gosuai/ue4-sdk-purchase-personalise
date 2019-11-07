@@ -122,11 +122,16 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Recommendation Data")
 	ERecommendationScenario scenario;
 
+	/** Recommendation category for Highlight scenario */
+	UPROPERTY(BlueprintReadOnly, Category = "Recommendation Data")
+	FString category;
+
 	/** Recommented items */
 	UPROPERTY(BlueprintReadOnly, Category = "Recommendation Data")
 	TArray<FGosuRecommendedItem> items;
 
 public:
 	FGosuRecommendation()
-		: scenario(ERecommendationScenario::Default){};
+		: scenario(ERecommendationScenario::Default)
+		, category(FString()){};
 };

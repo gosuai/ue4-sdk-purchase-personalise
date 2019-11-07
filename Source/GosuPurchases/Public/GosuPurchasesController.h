@@ -116,7 +116,7 @@ protected:
 
 public:
 	/** Get recommendated items for desired category */
-	TArray<FGosuRecommendedItem> GetRecommendedItems(ERecommendationScenario Scenario) const;
+	TArray<FGosuRecommendedItem> GetRecommendedItems(ERecommendationScenario Scenario, const FString& StoreCategory) const;
 
 	/** Event occured when recommended items were fetched */
 	UPROPERTY(BlueprintAssignable, Category = "GOSU|Purchases|Callback")
@@ -124,7 +124,7 @@ public:
 
 protected:
 	/** Cached recommendations storage */
-	TMap<ERecommendationScenario, FGosuRecommendation> Recommendations;
+	TArray<FGosuRecommendation> Recommendations;
 
 	/** Cached user id */
 	FString UserID;
