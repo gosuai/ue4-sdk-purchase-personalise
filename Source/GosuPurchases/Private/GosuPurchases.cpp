@@ -39,7 +39,7 @@ void FGosuPurchasesModule::StartupModule()
 		PurchasesContoller->AddToRoot();
 
 		// Initialize controller with default settings
-		PurchasesContoller->Initialize(World);
+		PurchasesContoller->Initialize(GosuPurchasesSettings->AppId, GosuPurchasesSettings->bDevelopmentMode ? GosuPurchasesSettings->SecretKeyDevelopment : GosuPurchasesSettings->SecretKeyProduction);
 
 		GosuPurchasesControllers.Add(World, PurchasesContoller);
 

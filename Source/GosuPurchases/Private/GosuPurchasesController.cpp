@@ -41,23 +41,13 @@ void UGosuPurchasesController::Tick(float DeltaTime)
 	}
 }
 
-void UGosuPurchasesController::Initialize(UWorld* World)
+void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey)
 {
 	LoadData();
 
-	// Pre-cache secret key
-	const UGosuPurchasesSettings* Settings = FGosuPurchasesModule::Get().GetSettings();
-	if (IsDevelopmentModeEnabled())
-	{
-		SecretKey = Settings->SecretKeyDevelopment;
-	}
-	else
-	{
-		SecretKey = Settings->SecretKeyProduction;
-	}
-
-	// Cache app id
-	AppId = Settings->AppId;
+	// Pre-cache initialization data
+	SecretKey = InSecretKey;
+	AppId = InAppId;
 
 	UE_LOG(LogGosuPurchases, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }

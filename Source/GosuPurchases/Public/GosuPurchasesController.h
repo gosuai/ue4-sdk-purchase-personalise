@@ -43,7 +43,8 @@ protected:
 
 public:
 	/** Initialize controller with provided data (used to override project settings) */
-	void Initialize(UWorld* World);
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void Initialize(const FString& InAppId, const FString& InSecretKey);
 
 	/** Register game session with provided player id */
 	void RegisterSession(APlayerController* PlayerController, const FString& PlayerId);
@@ -136,11 +137,11 @@ protected:
 	static const FString GosuApiEndpoint;
 
 private:
-	/** Cached secret key */
-	FString SecretKey;
-
 	/** Cached AppId */
 	FString AppId;
+
+	/** Cached secret key */
+	FString SecretKey;
 
 	/** Cached showcase events to be sent in bundle */
 	TArray<FGosuShowcaseEvent> ShowcaseEvents;
