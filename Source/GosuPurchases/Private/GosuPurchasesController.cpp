@@ -384,12 +384,6 @@ void UGosuPurchasesController::LoadData()
 	{
 		Recommendations = SavedData.Recommendations;
 	}
-	else if (!SavedData.SecretKey.IsEmpty())
-	{
-		UE_LOG(LogGosuPurchases, Warning, TEXT("%s: Cache was generated with different secret key, discarding now"), *VA_FUNC_LINE);
-
-		UGosuPurchasesSave::Save(FGosuPurchasesSaveData(SecretKey));
-	}
 }
 
 void UGosuPurchasesController::SaveData()
