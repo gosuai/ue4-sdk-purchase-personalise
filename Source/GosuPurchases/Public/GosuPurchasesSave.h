@@ -19,9 +19,21 @@ struct GOSUPURCHASES_API FGosuPurchasesSaveData
 	UPROPERTY()
 	TArray<FGosuRecommendation> Recommendations;
 
+	/** Secret key used for cache data */
+	UPROPERTY()
+	FString SecretKey;
+
 	FGosuPurchasesSaveData(){};
+
 	FGosuPurchasesSaveData(TArray<FGosuRecommendation> InRecommendations)
 		: Recommendations(InRecommendations){};
+
+	FGosuPurchasesSaveData(const FString& InSecretKey)
+		: SecretKey(InSecretKey){};
+
+	FGosuPurchasesSaveData(TArray<FGosuRecommendation> InRecommendations, const FString& InSecretKey)
+		: Recommendations(InRecommendations)
+		, SecretKey(InSecretKey){};
 };
 
 UCLASS()

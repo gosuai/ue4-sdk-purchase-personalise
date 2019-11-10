@@ -44,7 +44,7 @@ protected:
 public:
 	/** Initialize controller with provided data (used to override project settings) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
-	void Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableRecommendationsCache = true);
+	void Initialize(const FString& InAppId, const FString& InSecretKey);
 
 	/** Register game session with provided player id */
 	void RegisterSession(APlayerController* PlayerController, const FString& PlayerId);
@@ -142,9 +142,6 @@ private:
 
 	/** Cached secret key */
 	FString SecretKey;
-
-	/** Is data saves enabled */
-	bool bSaveData;
 
 	/** Cached showcase events to be sent in bundle */
 	TArray<FGosuShowcaseEvent> ShowcaseEvents;

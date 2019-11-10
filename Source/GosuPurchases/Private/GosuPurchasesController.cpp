@@ -29,8 +29,6 @@ UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	FlushTimeAccumulator = 0.f;
-
-	bSaveData = true;
 }
 
 void UGosuPurchasesController::Tick(float DeltaTime)
@@ -43,15 +41,14 @@ void UGosuPurchasesController::Tick(float DeltaTime)
 	}
 }
 
-void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableRecommendationsCache)
+void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey)
 {
-	bSaveData = bEnableRecommendationsCache;
-
-	LoadData();
-
 	// Pre-cache initialization data
 	SecretKey = InSecretKey;
 	AppId = InAppId;
+
+	// Load cached recommendations
+	LoadData();
 
 	UE_LOG(LogGosuPurchases, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }
@@ -381,19 +378,23 @@ bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, F
 
 void UGosuPurchasesController::LoadData()
 {
-	if (bSaveData)
+	auto SavedData = UGosuPurchasesSave::Load();
+
+	if (SavedData.SecretKey == SecretKey)
 	{
-		auto SavedData = UGosuPurchasesSave::Load();
 		Recommendations = SavedData.Recommendations;
+	}
+	else if (!SavedData.SecretKey.IsEmpty())
+	{
+		UE_LOG(LogGosuPurchases, Warning, TEXT("%s: Cache was generated with different secret key, discarding now"), *VA_FUNC_LINE);
+
+		UGosuPurchasesSave::Save(FGosuPurchasesSaveData(SecretKey));
 	}
 }
 
 void UGosuPurchasesController::SaveData()
 {
-	if (bSaveData)
-	{
-		UGosuPurchasesSave::Save(FGosuPurchasesSaveData(Recommendations));
-	}
+	UGosuPurchasesSave::Save(FGosuPurchasesSaveData(Recommendations, SecretKey));
 }
 
 bool UGosuPurchasesController::IsDevelopmentModeEnabled() const
