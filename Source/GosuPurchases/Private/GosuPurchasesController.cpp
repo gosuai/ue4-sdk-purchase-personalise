@@ -29,6 +29,8 @@ UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& Obj
 	: Super(ObjectInitializer)
 {
 	FlushTimeAccumulator = 0.f;
+
+	bSaveData = true;
 }
 
 void UGosuPurchasesController::Tick(float DeltaTime)
@@ -41,8 +43,10 @@ void UGosuPurchasesController::Tick(float DeltaTime)
 	}
 }
 
-void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey)
+void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableSaveData)
 {
+	bSaveData = bEnableSaveData;
+
 	LoadData();
 
 	// Pre-cache initialization data
@@ -377,13 +381,19 @@ bool UGosuPurchasesController::HandleRequestError(FHttpRequestPtr HttpRequest, F
 
 void UGosuPurchasesController::LoadData()
 {
-	auto SavedData = UGosuPurchasesSave::Load();
-	Recommendations = SavedData.Recommendations;
+	if (bSaveData)
+	{
+		auto SavedData = UGosuPurchasesSave::Load();
+		Recommendations = SavedData.Recommendations;
+	}
 }
 
 void UGosuPurchasesController::SaveData()
 {
-	UGosuPurchasesSave::Save(FGosuPurchasesSaveData(Recommendations));
+	if (bSaveData)
+	{
+		UGosuPurchasesSave::Save(FGosuPurchasesSaveData(Recommendations));
+	}
 }
 
 bool UGosuPurchasesController::IsDevelopmentModeEnabled() const
