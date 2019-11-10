@@ -43,9 +43,9 @@ void UGosuPurchasesController::Tick(float DeltaTime)
 	}
 }
 
-void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableSaveData)
+void UGosuPurchasesController::Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableRecommendationsCache)
 {
-	bSaveData = bEnableSaveData;
+	bSaveData = bEnableRecommendationsCache;
 
 	LoadData();
 

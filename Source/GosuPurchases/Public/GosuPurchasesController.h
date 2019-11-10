@@ -44,7 +44,7 @@ protected:
 public:
 	/** Initialize controller with provided data (used to override project settings) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
-	void Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableSaveData = true);
+	void Initialize(const FString& InAppId, const FString& InSecretKey, bool bEnableRecommendationsCache = true);
 
 	/** Register game session with provided player id */
 	void RegisterSession(APlayerController* PlayerController, const FString& PlayerId);
