@@ -1,4 +1,4 @@
-# contents:
+# Contents:
 * [intro](#intro)
 * [prerequisites](#prerequisites)
 * [platforms supported](#platforms-supported)
