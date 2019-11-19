@@ -23,7 +23,7 @@
 
 #define LOCTEXT_NAMESPACE "FGosuPurchasesModule"
 
-const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://platform.gosu.ai/api/v1"));
+const FString UGosuPurchasesController::GosuApiEndpoint(TEXT("https://gosutag.com/api/v1"));
 
 UGosuPurchasesController::UGosuPurchasesController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
