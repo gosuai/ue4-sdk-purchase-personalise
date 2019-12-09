@@ -12,7 +12,7 @@
 
 ## intro:
 
-**GosuAI Purchase Personalisation SDK** enables Unreal Engine developer to personalise player's in-game shopping experience and grow in-game revenue.
+**GosuTag Purchase Personalisation SDK** enables Unreal Engine developer to personalise player's in-game shopping experience and grow in-game revenue.
 
 [![statusIcon](https://teamcity.ufna.dev/app/rest/builds/buildType:(id:GosuAi_ClangFormatCheck)/statusIcon.svg)](https://teamcity.ufna.dev/viewType.html?buildTypeId=GosuAi_ClangFormatCheck&guest=1)
 
@@ -22,7 +22,7 @@
 * Unreal Engine 4.22+
 * win 7 (or higher) or macos 10.9.2 (or higher)
 * Visual Studio 2017 (or higher) or XCode 10.1 (or higher)
-* Make sure to recieve your credentials before using the plugin. You will need `app_id`, `secret_key`, `dev_secret_key`. [Visit website](http://platform.gosu.ai) to receive them.
+* Make sure to recieve your credentials before using the plugin. You will need `app_id`, `secret_key`, `dev_secret_key`. [Visit website](http://gosutag.com) to receive them.
 
 
 ## platforms supported:
@@ -36,7 +36,7 @@
 
 
 ## how it works:
-SDK connects to players' in-shop behaviour and expects per `player_id` recommendation request. Gosu.ai Personalisation Service now builds, chooses and updates your game recommendation models. SDK fetches a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new items become available there's no need to do anything special, SDK will pick them up automatically
+SDK connects to players' in-shop behaviour and expects per `player_id` recommendation request.GosuTag Purchase Personalisation Service now builds, chooses and updates your game recommendation models. SDK fetches a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new items become available there's no need to do anything special, SDK will pick them up automatically
 
 
 ## most used scenarios:
@@ -56,7 +56,7 @@ Pro tip: useful tactic is to setup recommended tab as a default tab (when player
 
 ## how to use:
 * install plugin with github or [UE4 marketplace](https://www.unrealengine.com/marketplace/en-US/store) (preferred)
-* acquire gosu.ai credentials [here](http://platform.gosu.ai)
+* acquire GosuTag credentials [here](http://gosutag.com)
 * pick 1 of 3 scenarios you would use personalised recommendations for:
   * recommended tab with items
   * highlight recommended item
