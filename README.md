@@ -36,7 +36,7 @@
 
 
 ## how it works:
-SDK connects to players' in-shop behaviour and expects per `player_id` recommendation request. GosuTag Personalisation Service now builds, chooses and updates your game recommendation models. SDK fetches a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new items become available there's no need to do anything special, SDK will pick them up automatically
+SDK connects to players' in-shop behaviour and expects per `player_id` recommendation request.GosuTag Purchase Personalisation Service now builds, chooses and updates your game recommendation models. SDK fetches a list of in-game shop items sorted by purchase probability for that particular `player_id`. These items are now cached and available for preferred scenario within your in-game shop. As more players are enjoying your game more your recommendations become even better over time. Best part is as soon as new items become available there's no need to do anything special, SDK will pick them up automatically
 
 
 ## most used scenarios:
@@ -72,7 +72,7 @@ Pro tip: useful tactic is to setup recommended tab as a default tab (when player
 
 Basic principle is this:
 * developer calls for session registration, item show/hide, item details show/hide (if applicable) and purchase initiation/completion
-* developer calls to get recommendation. SDK now fetches recommendations from servers and caches them within a client
+* developer calls to get recommendation. SDK now fetches recommendations from gosu servers and caches them within a client
 * they are now available for desired scenario
 
 Events are key actions which are triggered during the store browsing and in-app purchasing process.
