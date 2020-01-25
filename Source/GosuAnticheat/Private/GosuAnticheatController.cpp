@@ -10,6 +10,7 @@
 #include "GosuAnticheatSave.h"
 
 #include "GosuPurchases.h"
+#include "GosuPurchasesController.h"
 #include "GosuPurchasesLibrary.h"
 #include "GosuPurchasesSettings.h"
 
@@ -20,8 +21,6 @@
 #include "Misc/Base64.h"
 #include "Misc/Guid.h"
 #include "Misc/SecureHash.h"
-#include "Modules/ModuleManager.h"
-#include "Online.h"
 #include "Runtime/Launch/Resources/Version.h"
 
 #define LOCTEXT_NAMESPACE "FGosuAnticheatModule"
@@ -54,49 +53,6 @@ void UGosuAnticheatController::Initialize(const FString& InAppId, const FString&
 	LoadData();
 
 	UE_LOG(LogGosuAnticheat, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
-}
-
-void UGosuAnticheatController::RegisterSession(APlayerController* PlayerController, const FString& PlayerId)
-{
-	if (IOnlineSubsystem::IsEnabled(STEAM_SUBSYSTEM))
-	{
-		UE_LOG(LogGosuAnticheat, Error, TEXT("%s: SteamOnlineSubsystem is enabled: forcing to register Steam session"), *VA_FUNC_LINE);
-		RegisterSteamSession(PlayerController);
-		return;
-	}
-
-	CallRegisterSession(PlayerId);
-}
-
-void UGosuAnticheatController::RegisterSteamSession(APlayerController* PlayerController)
-{
-	CallRegisterSession(UGosuPurchasesLibrary::GetUniquePlayerId(PlayerController));
-}
-
-void UGosuAnticheatController::CallRegisterSession(const FString& PlayerId)
-{
-	if (PlayerId.IsEmpty())
-	{
-		UE_LOG(LogGosuAnticheat, Error, TEXT("%s: Can't register session with empty PlayerId"), *VA_FUNC_LINE);
-		return;
-	}
-
-	UserID = PlayerId;
-
-	const int64 Timestamp = FDateTime::UtcNow().ToUnixTimestamp();
-	FString PlatformName = IOnlineSubsystem::GetLocalPlatformName();
-
-	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
-	RequestDataJson->SetStringField(TEXT("uid"), UserID);
-	//RequestDataJson->SetStringField(TEXT("netId"), UGosuAnticheatLibrary::GetUniqueNetId());
-	RequestDataJson->SetNumberField(TEXT("timestamp"), Timestamp);
-	RequestDataJson->SetStringField(TEXT("platform"), PlatformName);
-
-	const FString Url = FString::Printf(TEXT("%s/event/%s/session"), *GosuApiEndpoint, *AppId);
-
-	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
-	//HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::CallEvent_HttpRequestComplete);
-	HttpRequest->ProcessRequest();
 }
 
 bool UGosuAnticheatController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
@@ -229,13 +185,7 @@ FString UGosuAnticheatController::SerializeJson(const TSharedPtr<FJsonObject> Da
 
 bool UGosuAnticheatController::CheckUserId() const
 {
-	if (UserID.IsEmpty())
-	{
-		UE_LOG(LogGosuAnticheat, Error, TEXT("%s: Can't process request: userId is invalid"), *VA_FUNC_LINE);
-		return false;
-	}
-
-	return true;
+	return UGosuPurchasesLibrary::GetPurchasesController(this)->CheckUserId();
 }
 
 void UGosuAnticheatController::FlushEvents()

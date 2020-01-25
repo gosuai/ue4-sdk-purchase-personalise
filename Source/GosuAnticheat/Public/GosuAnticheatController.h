@@ -36,16 +36,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
 	void Initialize(const FString& InAppId, const FString& InSecretKey);
 
-	/** Register game session with provided player id */
-	void RegisterSession(APlayerController* PlayerController, const FString& PlayerId);
-
-	/** Register game session while using SteamOnlineSubsystem */
-	void RegisterSteamSession(APlayerController* PlayerController);
-
-protected:
-	/** Sessions is started with PlayerId  */
-	void CallRegisterSession(const FString& PlayerId);
-
 public:
 	/** Return true if error is happened */
 	bool HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback);
@@ -71,10 +61,6 @@ protected:
 
 	/** Flush showcase events */
 	void FlushEvents();
-
-public:
-	/** Cached user id */
-	FString UserID;
 
 protected:
 	static const FString GosuApiEndpoint;

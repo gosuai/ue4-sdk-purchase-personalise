@@ -16,7 +16,7 @@ UGosuAnticheatLibrary::UGosuAnticheatLibrary(const FObjectInitializer& ObjectIni
 {
 }
 
-UGosuAnticheatController* UGosuAnticheatLibrary::GetAnticheatController(UObject* WorldContextObject)
+UGosuAnticheatController* UGosuAnticheatLibrary::GetAnticheatController(const UObject* WorldContextObject)
 {
 	if (UWorld* World = GEngine->GetWorldFromContextObject(WorldContextObject, EGetWorldErrorMode::LogAndReturnNull))
 	{
@@ -24,20 +24,4 @@ UGosuAnticheatController* UGosuAnticheatLibrary::GetAnticheatController(UObject*
 	}
 
 	return nullptr;
-}
-
-void UGosuAnticheatLibrary::RegisterSession(UObject* WorldContextObject, APlayerController* PlayerController, const FString& PlayerId)
-{
-	if (auto AnticheatController = UGosuAnticheatLibrary::GetAnticheatController(WorldContextObject))
-	{
-		AnticheatController->RegisterSession(PlayerController, PlayerId);
-	}
-}
-
-void UGosuAnticheatLibrary::RegisterSteamSession(UObject* WorldContextObject, APlayerController* PlayerController)
-{
-	if (auto AnticheatController = UGosuAnticheatLibrary::GetAnticheatController(WorldContextObject))
-	{
-		AnticheatController->RegisterSteamSession(PlayerController);
-	}
 }

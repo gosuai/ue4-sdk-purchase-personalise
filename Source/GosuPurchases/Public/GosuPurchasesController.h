@@ -95,10 +95,12 @@ protected:
 	FString GetInAppPurchaseStateAsString(EInAppPurchaseState::Type EnumValue) const;
 	FString GetScenarioAsString(ERecommendationScenario EnumValue) const;
 
+public:
 	/** Helper functions to check filled stuff */
 	bool CheckUserId() const;
 	bool CheckImpressionId() const;
 
+protected:
 	/** Flush showcase events */
 	void FlushEvents();
 

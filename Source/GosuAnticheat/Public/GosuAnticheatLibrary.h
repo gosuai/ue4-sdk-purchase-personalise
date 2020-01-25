@@ -21,14 +21,6 @@ class GOSUANTICHEAT_API UGosuAnticheatLibrary : public UBlueprintFunctionLibrary
 
 public:
 	/** Direct access to Anticheat controller */
-	UFUNCTION(BlueprintPure, Category = "GOSU|Anticheat", meta = (WorldContext = "WorldContextObject"))
-	static UGosuAnticheatController* GetAnticheatController(UObject* WorldContextObject);
-
-	/** Register game session with provided player id */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Anticheat|Events", meta = (WorldContext = "WorldContextObject"))
-	static void RegisterSession(UObject* WorldContextObject, APlayerController* PlayerController, const FString& PlayerId);
-
-	/** Register game session while using SteamOnlineSubsystem */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Anticheat|Events", meta = (WorldContext = "WorldContextObject"))
-	static void RegisterSteamSession(UObject* WorldContextObject, APlayerController* PlayerController);
+	UFUNCTION(BlueprintPure, Category = "GOSU|Common", meta = (WorldContext = "WorldContextObject"))
+	static UGosuAnticheatController* GetAnticheatController(const UObject* WorldContextObject);
 };
