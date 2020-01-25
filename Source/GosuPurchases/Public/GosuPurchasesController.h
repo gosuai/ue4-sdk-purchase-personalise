@@ -5,6 +5,7 @@
 
 #include "GosuPurchasesDataModel.h"
 
+#include "Delegates/DelegateCombinations.h"
 #include "Http.h"
 #include "Interfaces/OnlineStoreInterface.h"
 #include "Tickable.h"
@@ -14,6 +15,9 @@
 class APlayerController;
 class FJsonObject;
 struct FGuid;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFetchRecommendation, const FGosuRecommendation&, Recommendation);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceiveRecommendation, const FGosuRecommendation&, Recommendation);
 
 UCLASS()
 class GOSUPURCHASES_API UGosuPurchasesController : public UObject, public FTickableGameObject
@@ -111,6 +115,9 @@ public:
 	/** Event occured when recommended items were fetched */
 	UPROPERTY(BlueprintAssignable, Category = "GOSU|Purchases|Callback")
 	FOnFetchRecommendation OnFetchRecommendation;
+
+	/** Get cached user id */
+	FString GetUserID() const;
 
 protected:
 	/** Cached recommendations storage */

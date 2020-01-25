@@ -18,6 +18,8 @@ class APlayerController;
 class FJsonObject;
 struct FGuid;
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceivePlayerStatus, EGosuPlayerStatus, PlayerStatus);
+
 UCLASS()
 class GOSUANTICHEAT_API UGosuAnticheatController : public UObject, public FTickableGameObject
 {
@@ -35,6 +37,21 @@ public:
 	/** Initialize controller with provided data (used to override project settings) */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
 	void Initialize(const FString& InAppId, const FString& InSecretKey);
+
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates);
+
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void ServerPlayerJoin(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating);
+
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void ServerPlayerLeave(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating);
+
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData);
+
+	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
+	void CheckUserStatus(const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback);
 
 public:
 	/** Return true if error is happened */

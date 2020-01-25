@@ -55,6 +55,26 @@ void UGosuAnticheatController::Initialize(const FString& InAppId, const FString&
 	UE_LOG(LogGosuAnticheat, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }
 
+void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates)
+{
+}
+
+void UGosuAnticheatController::ServerPlayerJoin(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating)
+{
+}
+
+void UGosuAnticheatController::ServerPlayerLeave(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating)
+{
+}
+
+void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData)
+{
+}
+
+void UGosuAnticheatController::CheckUserStatus(const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback)
+{
+}
+
 bool UGosuAnticheatController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
 {
 	FString ErrorStr;

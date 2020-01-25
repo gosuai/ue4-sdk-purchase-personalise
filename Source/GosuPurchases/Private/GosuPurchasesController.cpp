@@ -590,4 +590,9 @@ TArray<FGosuRecommendedItem> UGosuPurchasesController::GetRecommendedItems(EReco
 	return TArray<FGosuRecommendedItem>();
 }
 
+FString UGosuPurchasesController::GetUserID() const
+{
+	return UserID;
+}
+
 #undef LOCTEXT_NAMESPACE
