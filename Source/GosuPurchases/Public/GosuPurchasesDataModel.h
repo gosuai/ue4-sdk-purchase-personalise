@@ -5,7 +5,17 @@
 
 #include "GosuPurchasesDefines.h"
 
+#include "Delegates/DelegateCombinations.h"
+
 #include "GosuPurchasesDataModel.generated.h"
+
+/** Verb used by the request */
+UENUM(BlueprintType)
+enum class ERequestVerb : uint8
+{
+	GET,
+	POST
+};
 
 UENUM(BlueprintType)
 enum class ERecommendationScenario : uint8
@@ -135,3 +145,7 @@ public:
 		: scenario(ERecommendationScenario::Default)
 		, category(FString()){};
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFetchRecommendation, const FGosuRecommendation&, Recommendation);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceiveRecommendation, const FGosuRecommendation&, Recommendation);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnRequestError, int32, StatusCode, const FString&, ErrorMessage);

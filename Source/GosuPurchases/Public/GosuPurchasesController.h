@@ -5,7 +5,6 @@
 
 #include "GosuPurchasesDataModel.h"
 
-#include "Delegates/DelegateCombinations.h"
 #include "Http.h"
 #include "Interfaces/OnlineStoreInterface.h"
 #include "Tickable.h"
@@ -15,18 +14,6 @@
 class APlayerController;
 class FJsonObject;
 struct FGuid;
-
-/** Verb used by the request */
-UENUM(BlueprintType)
-enum class ERequestVerb : uint8
-{
-	GET,
-	POST
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFetchRecommendation, const FGosuRecommendation&, Recommendation);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceiveRecommendation, const FGosuRecommendation&, Recommendation);
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnRequestError, int32, StatusCode, const FString&, ErrorMessage);
 
 UCLASS()
 class GOSUPURCHASES_API UGosuPurchasesController : public UObject, public FTickableGameObject

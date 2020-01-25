@@ -29,6 +29,21 @@
 				"XBoxOne",
 				"PS4"
 			]
+		},
+		{
+			"Name": "GosuAnticheat",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"WhitelistPlatforms": [
+				"Win32",
+				"Win64",
+				"Mac",
+				"IOS",
+				"Android",
+				"Linux",
+				"XBoxOne",
+				"PS4"
+			]
 		}
 	],
 	"Plugins": [
