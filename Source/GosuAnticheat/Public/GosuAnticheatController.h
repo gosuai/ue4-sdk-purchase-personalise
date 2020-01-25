@@ -18,7 +18,7 @@ class APlayerController;
 class FJsonObject;
 struct FGuid;
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReceivePlayerStatus, EGosuPlayerStatus, PlayerStatus);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnReceivePlayerStatus, const FString&, PlayerId, EGosuPlayerStatus, PlayerStatus);
 
 UCLASS()
 class GOSUANTICHEAT_API UGosuAnticheatController : public UObject, public FTickableGameObject
@@ -54,6 +54,9 @@ public:
 	void CheckUserStatus(const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback);
 
 public:
+	void Generic_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
+	void CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback);
+
 	/** Return true if error is happened */
 	bool HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback);
 

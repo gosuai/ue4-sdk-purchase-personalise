@@ -75,6 +75,41 @@ void UGosuAnticheatController::CheckUserStatus(const FOnReceivePlayerStatus& Suc
 {
 }
 
+void UGosuAnticheatController::Generic_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded)
+{
+	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
+	{
+		return;
+	}
+
+	FString ResponseStr = HttpResponse->GetContentAsString();
+	UE_LOG(LogGosuAnticheat, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
+}
+
+void UGosuAnticheatController::CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback)
+{
+	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
+	{
+		return;
+	}
+
+	FString ResponseStr = HttpResponse->GetContentAsString();
+	UE_LOG(LogGosuAnticheat, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
+
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*HttpResponse->GetContentAsString());
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		UE_LOG(LogGosuAnticheat, Error, TEXT("%s: Can't deserialize server response"), *VA_FUNC_LINE);
+		return;
+	}
+
+	FString uid = JsonObject->GetStringField("uid");
+	FString status = JsonObject->GetStringField("status");
+
+	SuccessCallback.ExecuteIfBound(uid, status.Equals(TEXT("EGosuPlayerStatus::Banned")) ? EGosuPlayerStatus::Banned : EGosuPlayerStatus::Default);
+}
+
 bool UGosuAnticheatController::HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback)
 {
 	FString ErrorStr;
