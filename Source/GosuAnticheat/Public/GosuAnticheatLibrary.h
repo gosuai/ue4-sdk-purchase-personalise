@@ -12,7 +12,7 @@
 
 #include "GosuAnticheatLibrary.generated.h"
 
-class UGosuAnticheatSettings;
+class UGosuPurchasesSettings;
 
 UCLASS()
 class GOSUANTICHEAT_API UGosuAnticheatLibrary : public UBlueprintFunctionLibrary
@@ -23,10 +23,6 @@ public:
 	/** Direct access to Anticheat controller */
 	UFUNCTION(BlueprintPure, Category = "GOSU|Anticheat", meta = (WorldContext = "WorldContextObject"))
 	static UGosuAnticheatController* GetAnticheatController(UObject* WorldContextObject);
-
-	/** Direct access to Anticheat settings */
-	UFUNCTION(BlueprintPure, Category = "GOSU|Anticheat", meta = (WorldContext = "WorldContextObject"))
-	static UGosuAnticheatSettings* GetAnticheatSettings(UObject* WorldContextObject);
 
 	/** Register game session with provided player id */
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Anticheat|Events", meta = (WorldContext = "WorldContextObject"))

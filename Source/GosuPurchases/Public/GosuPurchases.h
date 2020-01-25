@@ -9,7 +9,7 @@
 class UGosuPurchasesSettings;
 class UGosuPurchasesController;
 
-class FGosuPurchasesModule : public IModuleInterface
+class GOSUPURCHASES_API FGosuPurchasesModule : public IModuleInterface
 {
 public:
 	/** IModuleInterface implementation */

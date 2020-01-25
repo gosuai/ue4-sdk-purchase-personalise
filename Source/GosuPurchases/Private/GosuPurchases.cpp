@@ -21,9 +21,9 @@ void FGosuPurchasesModule::StartupModule()
 	// Register settings
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingsModule->RegisterSettings("Project", "Plugins", "GosuPurchases",
-			LOCTEXT("RuntimeSettingsName", "GOSU Purchases"),
-			LOCTEXT("RuntimeSettingsDescription", "Configure GOSU Purchases"),
+		SettingsModule->RegisterSettings("Project", "Plugins", "Gosu",
+			LOCTEXT("RuntimeSettingsName", "GOSU SDK"),
+			LOCTEXT("RuntimeSettingsDescription", "Configure GOSU SDK"),
 			GosuPurchasesSettings);
 	}
 
@@ -53,7 +53,7 @@ void FGosuPurchasesModule::ShutdownModule()
 {
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingsModule->UnregisterSettings("Project", "Plugins", "GosuPurchases");
+		SettingsModule->UnregisterSettings("Project", "Plugins", "Gosu");
 	}
 
 	if (!GExitPurge)

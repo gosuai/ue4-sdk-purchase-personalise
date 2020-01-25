@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class UGosuAnticheatSettings;
+class UGosuPurchasesSettings;
 class UGosuAnticheatController;
 
 class FGosuAnticheatModule : public IModuleInterface
@@ -37,16 +37,10 @@ public:
 		return FModuleManager::Get().IsModuleLoaded("GosuAnticheat");
 	}
 
-	/** Getter for internal settings object to support runtime configuration changes */
-	UGosuAnticheatSettings* GetSettings() const;
-
 	/** Get global data controller */
 	UGosuAnticheatController* GetAnticheatController(UWorld* World) const;
 
 private:
-	/** Module settings */
-	UGosuAnticheatSettings* GosuAnticheatSettings;
-
 	/** Data controllers (one for each World we have) */
 	TMap<UWorld*, UGosuAnticheatController*> GosuAnticheatControllers;
 };

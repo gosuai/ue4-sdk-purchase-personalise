@@ -5,7 +5,9 @@
 
 #include "GosuAnticheatController.h"
 #include "GosuAnticheatDefines.h"
-#include "GosuAnticheatSettings.h"
+
+#include "GosuPurchases.h"
+#include "GosuPurchasesSettings.h"
 
 #include "Developer/Settings/Public/ISettingsModule.h"
 #include "Engine/World.h"
@@ -15,18 +17,6 @@
 
 void FGosuAnticheatModule::StartupModule()
 {
-	GosuAnticheatSettings = NewObject<UGosuAnticheatSettings>(GetTransientPackage(), "GosuAnticheatSettings", RF_Standalone);
-	GosuAnticheatSettings->AddToRoot();
-
-	// Register settings
-	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
-	{
-		SettingsModule->RegisterSettings("Project", "Plugins", "GosuAnticheat",
-			LOCTEXT("RuntimeSettingsName", "GOSU Anticheat"),
-			LOCTEXT("RuntimeSettingsDescription", "Configure GOSU Anticheat"),
-			GosuAnticheatSettings);
-	}
-
 	FWorldDelegates::OnWorldCleanup.AddLambda([this](UWorld* World, bool bSessionEnded, bool bCleanupResources) {
 		GosuAnticheatControllers.Remove(World);
 
@@ -39,7 +29,8 @@ void FGosuAnticheatModule::StartupModule()
 		AnticheatContoller->AddToRoot();
 
 		// Initialize controller with default settings
-		AnticheatContoller->Initialize(GosuAnticheatSettings->AppId, GosuAnticheatSettings->bDevelopmentMode ? GosuAnticheatSettings->SecretKeyDevelopment : GosuAnticheatSettings->SecretKeyProduction);
+		const UGosuPurchasesSettings* Settings = FGosuPurchasesModule::Get().GetSettings();
+		AnticheatContoller->Initialize(Settings->AppId, Settings->bDevelopmentMode ? Settings->SecretKeyDevelopment : Settings->SecretKeyProduction);
 
 		GosuAnticheatControllers.Add(World, AnticheatContoller);
 
@@ -58,26 +49,13 @@ void FGosuAnticheatModule::ShutdownModule()
 
 	if (!GExitPurge)
 	{
-		// If we're in exit purge, this object has already been destroyed
-		GosuAnticheatSettings->RemoveFromRoot();
-
 		for (auto AnticheatContoller : GosuAnticheatControllers)
 		{
 			AnticheatContoller.Value->RemoveFromRoot();
 		}
 	}
-	else
-	{
-		GosuAnticheatSettings = nullptr;
-	}
 
 	GosuAnticheatControllers.Empty();
-}
-
-UGosuAnticheatSettings* FGosuAnticheatModule::GetSettings() const
-{
-	check(GosuAnticheatSettings);
-	return GosuAnticheatSettings;
 }
 
 UGosuAnticheatController* FGosuAnticheatModule::GetAnticheatController(UWorld* World) const

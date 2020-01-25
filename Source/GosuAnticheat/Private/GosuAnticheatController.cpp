@@ -8,9 +8,10 @@
 #include "GosuAnticheatDefines.h"
 #include "GosuAnticheatLibrary.h"
 #include "GosuAnticheatSave.h"
-#include "GosuAnticheatSettings.h"
 
+#include "GosuPurchases.h"
 #include "GosuPurchasesLibrary.h"
+#include "GosuPurchasesSettings.h"
 
 #include "Engine.h"
 #include "Json.h"
@@ -161,7 +162,7 @@ void UGosuAnticheatController::SaveData()
 
 bool UGosuAnticheatController::IsDevelopmentModeEnabled() const
 {
-	const UGosuAnticheatSettings* Settings = FGosuAnticheatModule::Get().GetSettings();
+	const UGosuPurchasesSettings* Settings = FGosuPurchasesModule::Get().GetSettings();
 	bool bDevelopmentModeEnabled = Settings->bDevelopmentMode;
 
 #if UE_BUILD_SHIPPING

@@ -5,7 +5,6 @@
 
 #include "GosuAnticheat.h"
 #include "GosuAnticheatDataModel.h"
-#include "GosuAnticheatSettings.h"
 
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
@@ -25,11 +24,6 @@ UGosuAnticheatController* UGosuAnticheatLibrary::GetAnticheatController(UObject*
 	}
 
 	return nullptr;
-}
-
-UGosuAnticheatSettings* UGosuAnticheatLibrary::GetAnticheatSettings(UObject* WorldContextObject)
-{
-	return FGosuAnticheatModule::Get().GetSettings();
 }
 
 void UGosuAnticheatLibrary::RegisterSession(UObject* WorldContextObject, APlayerController* PlayerController, const FString& PlayerId)
