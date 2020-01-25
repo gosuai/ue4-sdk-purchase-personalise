@@ -239,7 +239,6 @@ bool UGosuAnticheatController::CheckUserId() const
 
 void UGosuAnticheatController::FlushEvents()
 {
-	
 }
 
 #undef LOCTEXT_NAMESPACE
