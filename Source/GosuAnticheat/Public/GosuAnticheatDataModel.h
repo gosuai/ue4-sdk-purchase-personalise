@@ -10,8 +10,8 @@
 UENUM(BlueprintType)
 enum class EGosuPlayerStatus : uint8
 {
-	Default,
-	Banned
+	Default, // Not banned
+	Banned	 // Banned
 };
 
 UENUM(BlueprintType)
