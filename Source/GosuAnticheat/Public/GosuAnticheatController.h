@@ -39,7 +39,7 @@ public:
 	void Initialize(const FString& InAppId, const FString& InSecretKey);
 
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
-	void ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates);
+	void ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& Map, const FString& GameMode, bool IsRanked, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates);
 
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
 	void ServerPlayerJoin(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating);

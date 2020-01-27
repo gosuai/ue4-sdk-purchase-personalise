@@ -55,7 +55,7 @@ void UGosuAnticheatController::Initialize(const FString& InAppId, const FString&
 	UE_LOG(LogGosuAnticheat, Log, TEXT("%s: Controller initialized: %s"), *VA_FUNC_LINE, *AppId);
 }
 
-void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates)
+void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& Map, const FString& GameMode, bool IsRanked, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates)
 {
 }
 
