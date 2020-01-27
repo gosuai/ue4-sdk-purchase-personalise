@@ -57,6 +57,41 @@ void UGosuAnticheatController::Initialize(const FString& InAppId, const FString&
 
 void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& Map, const FString& GameMode, bool IsRanked, const TArray<FGosuPlayerState>& PlayerStates, const TArray<FGosuTeamState>& TeamStates)
 {
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
+	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetStringField(TEXT("map"), Map);
+	RequestDataJson->SetStringField(TEXT("gameMode"), GameMode);
+	RequestDataJson->SetBoolField(TEXT("ranked"), IsRanked);
+	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
+
+	TArray<TSharedPtr<FJsonValue>> JsonArray;
+	TSharedRef<FJsonObject> JsonObject;
+	for (auto& PlayerData : PlayerStates)
+	{
+		if (FJsonObjectConverter::UStructToJsonObject(FGosuPlayerState::StaticStruct(), &PlayerData, JsonObject, 0, 0))
+		{
+			JsonArray.Add(MakeShareable(new FJsonValueObject(JsonObject)));
+		}
+	}
+	RequestDataJson->SetArrayField(TEXT("players"), JsonArray);
+
+	JsonArray.Empty();
+	for (auto& TeamData : TeamStates)
+	{
+		if (FJsonObjectConverter::UStructToJsonObject(FGosuTeamState::StaticStruct(), &TeamData, JsonObject, 0, 0))
+		{
+			JsonArray.Add(MakeShareable(new FJsonValueObject(JsonObject)));
+		}
+	}
+	RequestDataJson->SetArrayField(TEXT("teams"), JsonArray);
+
+	const FString Url = FString::Printf(TEXT("%s/match/%s/playerJoin"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::Generic_HttpRequestComplete);
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuAnticheatController::ServerPlayerJoin(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating)
