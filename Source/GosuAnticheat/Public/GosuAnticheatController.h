@@ -51,14 +51,17 @@ public:
 	void SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData);
 
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
-	void CheckUserStatus(const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback);
+	void CheckUserStatus(const FString& PlayerId, const FString& PlayerNetId, const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback);
 
 public:
 	void Generic_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
-	void CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback);
+	void CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback, FOnRequestError ErrorCallback);
 
 	/** Return true if error is happened */
 	bool HandleRequestError(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnRequestError ErrorCallback);
+
+	/** Convert enum to string */
+	FString GetMatchStatusAsString(EGosuMatchStatus EnumValue) const;
 
 protected:
 	/** Load save game and extract data */

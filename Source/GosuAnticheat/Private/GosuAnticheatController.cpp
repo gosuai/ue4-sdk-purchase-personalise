@@ -61,18 +61,57 @@ void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, E
 
 void UGosuAnticheatController::ServerPlayerJoin(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating)
 {
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
+	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
+	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
+	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
+	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
+	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
+
+	const FString Url = FString::Printf(TEXT("%s/match/%s/playerJoin"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::Generic_HttpRequestComplete);
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuAnticheatController::ServerPlayerLeave(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating)
 {
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
+	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
+	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
+	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
+	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
+	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
+
+	const FString Url = FString::Printf(TEXT("%s/match/%s/playerLeave"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::Generic_HttpRequestComplete);
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData)
 {
 }
 
-void UGosuAnticheatController::CheckUserStatus(const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback)
+void UGosuAnticheatController::CheckUserStatus(const FString& PlayerId, const FString& PlayerNetId, const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback)
 {
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
+	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
+
+	const FString Url = FString::Printf(TEXT("%s/user/%s/check"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::CheckUserStatus_HttpRequestComplete, SuccessCallback, ErrorCallback);
+	HttpRequest->ProcessRequest();
 }
 
 void UGosuAnticheatController::Generic_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded)
@@ -86,9 +125,9 @@ void UGosuAnticheatController::Generic_HttpRequestComplete(FHttpRequestPtr HttpR
 	UE_LOG(LogGosuAnticheat, Verbose, TEXT("%s: Response: %s"), *VA_FUNC_LINE, *ResponseStr);
 }
 
-void UGosuAnticheatController::CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback)
+void UGosuAnticheatController::CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback, FOnRequestError ErrorCallback)
 {
-	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, FOnRequestError()))
+	if (HandleRequestError(HttpRequest, HttpResponse, bSucceeded, ErrorCallback))
 	{
 		return;
 	}
@@ -159,6 +198,16 @@ bool UGosuAnticheatController::HandleRequestError(FHttpRequestPtr HttpRequest, F
 	}
 
 	return false;
+}
+
+FString UGosuAnticheatController::GetMatchStatusAsString(EGosuMatchStatus EnumValue) const
+{
+	if (const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, TEXT("EGosuMatchStatus"), true))
+	{
+		return EnumPtr->GetNameByValue((int64)EnumValue).ToString();
+	}
+
+	return FString("Invalid");
 }
 
 void UGosuAnticheatController::LoadData()
