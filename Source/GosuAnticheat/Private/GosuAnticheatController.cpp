@@ -36,7 +36,7 @@ UGosuAnticheatController::UGosuAnticheatController(const FObjectInitializer& Obj
 void UGosuAnticheatController::Tick(float DeltaTime)
 {
 	FlushTimeAccumulator += DeltaTime;
-	if (FlushTimeAccumulator >= 1.f)
+	if (FlushTimeAccumulator >= 5.f)
 	{
 		FlushEvents();
 		FlushTimeAccumulator = 0.f;
@@ -60,7 +60,7 @@ void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, E
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
 	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
-	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetStringField(TEXT("matchState"), GetMatchStatusAsString(MatchStatus));
 	RequestDataJson->SetStringField(TEXT("map"), Map);
 	RequestDataJson->SetStringField(TEXT("gameMode"), GameMode);
 	RequestDataJson->SetBoolField(TEXT("ranked"), IsRanked);
@@ -101,7 +101,7 @@ void UGosuAnticheatController::ServerPlayerJoin(const FString& MatchId, EGosuMat
 	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
 	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
 	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
-	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetStringField(TEXT("matchState"), GetMatchStatusAsString(MatchStatus));
 	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
 	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
 	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
@@ -120,7 +120,7 @@ void UGosuAnticheatController::ServerPlayerLeave(const FString& MatchId, EGosuMa
 	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
 	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
 	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
-	RequestDataJson->SetStringField(TEXT("state"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetStringField(TEXT("matchState"), GetMatchStatusAsString(MatchStatus));
 	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
 	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
 	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
@@ -134,6 +134,25 @@ void UGosuAnticheatController::ServerPlayerLeave(const FString& MatchId, EGosuMa
 
 void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData)
 {
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
+	RequestDataJson->SetStringField(TEXT("matchState"), GetMatchStatusAsString(MatchStatus));
+	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
+	RequestDataJson->SetStringField(TEXT("eventUUID"), FGuid::NewGuid().ToString());
+	RequestDataJson->SetNumberField(TEXT("timestamp"), FDateTime::UtcNow().ToUnixTimestamp());
+	RequestDataJson->SetStringField(TEXT("uid"), PlayerId);
+	RequestDataJson->SetStringField(TEXT("netId"), PlayerNetId);
+	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
+	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
+
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*JsonFormattedData);
+	TSharedPtr<FJsonObject> OutJsonObj;
+	if (FJsonSerializer::Deserialize(Reader, OutJsonObj))
+	{
+		RequestDataJson->SetObjectField(TEXT("data"), OutJsonObj.ToSharedRef());
+	}
+
+	CustomEvents.Add(MakeShareable(new FJsonValueObject(RequestDataJson)));
 }
 
 void UGosuAnticheatController::CheckUserStatus(const FString& PlayerId, const FString& PlayerNetId, const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback)
@@ -146,6 +165,19 @@ void UGosuAnticheatController::CheckUserStatus(const FString& PlayerId, const FS
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::CheckUserStatus_HttpRequestComplete, SuccessCallback, ErrorCallback);
+	HttpRequest->ProcessRequest();
+}
+
+void UGosuAnticheatController::FlushEvents()
+{
+	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
+	RequestDataJson->SetArrayField(TEXT("events"), CustomEvents);
+	CustomEvents.Empty();
+
+	const FString Url = FString::Printf(TEXT("%s/event/%s/send"), *GosuApiEndpoint, *AppId);
+
+	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
+	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::Generic_HttpRequestComplete);
 	HttpRequest->ProcessRequest();
 }
 
@@ -325,10 +357,6 @@ FString UGosuAnticheatController::SerializeJson(const TSharedPtr<FJsonObject> Da
 bool UGosuAnticheatController::CheckUserId() const
 {
 	return UGosuPurchasesLibrary::GetPurchasesController(this)->CheckUserId();
-}
-
-void UGosuAnticheatController::FlushEvents()
-{
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -16,6 +16,7 @@
 
 class APlayerController;
 class FJsonObject;
+class FJsonValue;
 struct FGuid;
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FOnReceivePlayerStatus, const FString&, PlayerId, EGosuPlayerStatus, PlayerStatus);
@@ -53,6 +54,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GOSU|Controller")
 	void CheckUserStatus(const FString& PlayerId, const FString& PlayerNetId, const FOnReceivePlayerStatus& SuccessCallback, const FOnRequestError& ErrorCallback);
 
+	/** Flush custom events */
+	void FlushEvents();
+
 public:
 	void Generic_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded);
 	void CheckUserStatus_HttpRequestComplete(FHttpRequestPtr HttpRequest, FHttpResponsePtr HttpResponse, bool bSucceeded, FOnReceivePlayerStatus SuccessCallback, FOnRequestError ErrorCallback);
@@ -82,9 +86,6 @@ protected:
 	/** Helper functions to check filled stuff */
 	bool CheckUserId() const;
 
-	/** Flush showcase events */
-	void FlushEvents();
-
 protected:
 	static const FString GosuApiEndpoint;
 
@@ -96,7 +97,7 @@ private:
 	FString SecretKey;
 
 	/** Cached showcase events to be sent in bundle */
-	TArray<FGosuCustomEvent> ShowcaseEvents;
+	TArray<TSharedPtr<FJsonValue>> CustomEvents;
 
 	/** Events flush time handler */
 	float FlushTimeAccumulator;

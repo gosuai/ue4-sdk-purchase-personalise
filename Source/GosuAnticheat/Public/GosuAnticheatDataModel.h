@@ -58,17 +58,3 @@ public:
 	FGosuTeamState()
 		: points(0.f){};
 };
-
-USTRUCT(BlueprintType)
-struct GOSUANTICHEAT_API FGosuCustomEvent
-{
-public:
-	GENERATED_BODY()
-
-	/** */
-	UPROPERTY(BlueprintReadWrite, Category = "Event Data")
-	FString data;
-
-public:
-	FGosuCustomEvent(){};
-};
