@@ -23,6 +23,22 @@ enum class EGosuMatchStatus : uint8
 };
 
 USTRUCT(BlueprintType)
+struct GOSUANTICHEAT_API FGosuCustomEvent
+{
+public:
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "Custom Event")
+	FString ParamName;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Custom Event")
+	FString ParamValue;
+
+public:
+	FGosuCustomEvent(){};
+};
+
+USTRUCT(BlueprintType)
 struct GOSUANTICHEAT_API FGosuPlayerState
 {
 public:

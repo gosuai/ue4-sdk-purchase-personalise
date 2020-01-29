@@ -132,7 +132,7 @@ void UGosuAnticheatController::ServerPlayerLeave(const FString& MatchId, EGosuMa
 	HttpRequest->ProcessRequest();
 }
 
-void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const FString& JsonFormattedData)
+void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatchStatus MatchStatus, float MatchTime, const FString& PlayerId, const FString& PlayerNetId, const FString& PlayerNickname, float PlayerRating, const TArray<FGosuCustomEvent>& CustomData)
 {
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetStringField(TEXT("matchId"), MatchId);
@@ -145,12 +145,12 @@ void UGosuAnticheatController::SendCustomEvent(const FString& MatchId, EGosuMatc
 	RequestDataJson->SetStringField(TEXT("nickname"), PlayerNickname);
 	RequestDataJson->SetNumberField(TEXT("rating"), PlayerRating);
 
-	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(*JsonFormattedData);
-	TSharedPtr<FJsonObject> OutJsonObj;
-	if (FJsonSerializer::Deserialize(Reader, OutJsonObj))
+	TSharedPtr<FJsonObject> CustomDataJson = MakeShareable(new FJsonObject);
+	for (auto& EventData : CustomData)
 	{
-		RequestDataJson->SetObjectField(TEXT("data"), OutJsonObj.ToSharedRef());
+		CustomDataJson->SetStringField(EventData.ParamName, EventData.ParamValue);
 	}
+	RequestDataJson->SetObjectField(TEXT("data"), CustomDataJson);
 
 	CustomEvents.Add(MakeShareable(new FJsonValueObject(RequestDataJson)));
 }
