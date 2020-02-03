@@ -25,7 +25,7 @@
 
 #define LOCTEXT_NAMESPACE "FGosuAnticheatModule"
 
-const FString UGosuAnticheatController::GosuApiEndpoint(TEXT("https://gosutag.com/api/v1"));
+const FString UGosuAnticheatController::GosuApiEndpoint(TEXT("https://stormy-depths-03783.herokuapp.com/api/v1"));
 
 UGosuAnticheatController::UGosuAnticheatController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -67,7 +67,7 @@ void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, E
 	RequestDataJson->SetNumberField(TEXT("matchTime"), MatchTime);
 
 	TArray<TSharedPtr<FJsonValue>> JsonArray;
-	TSharedRef<FJsonObject> JsonObject;
+	TSharedRef<FJsonObject> JsonObject = MakeShareable(new FJsonObject());
 	for (auto& PlayerData : PlayerStates)
 	{
 		if (FJsonObjectConverter::UStructToJsonObject(FGosuPlayerState::StaticStruct(), &PlayerData, JsonObject, 0, 0))
@@ -87,7 +87,7 @@ void UGosuAnticheatController::ServerMatchStateChanged(const FString& MatchId, E
 	}
 	RequestDataJson->SetArrayField(TEXT("teams"), JsonArray);
 
-	const FString Url = FString::Printf(TEXT("%s/match/%s/playerJoin"), *GosuApiEndpoint, *AppId);
+	const FString Url = FString::Printf(TEXT("%s/match/%s/state"), *GosuApiEndpoint, *AppId);
 
 	TSharedRef<IHttpRequest> HttpRequest = CreateHttpRequest(Url, SerializeJson(RequestDataJson));
 	HttpRequest->OnProcessRequestComplete().BindUObject(this, &UGosuAnticheatController::Generic_HttpRequestComplete);

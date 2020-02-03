@@ -116,7 +116,7 @@ public:
 	static bool GetControllerNetworkID(APlayerController* PlayerController, FString& NetworkID, bool bKeepPort = false);
 
 	/** Helper function to get unique player id from Online Subsystem */
-	UFUNCTION(BlueprintCallable, Category = "GOSU|Tools")
+	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
 	static bool GetUniquePlayerId(APlayerController* PlayerController, FString& PlayerId);
 
 	/** Helper function for easy C++ usage */
