@@ -1,0 +1,6 @@
+[submodule "Content/Demo/GosuMarketplace"]
+	path = Content/Demo/GosuMarketplace
+	url = ../../ufna/GosuMarketplace.git
+[submodule "Content/Demo/Marketplace"]
+	path = Content/Demo/Marketplace
+	url = ../../ufna/GosuMarketplace.git
