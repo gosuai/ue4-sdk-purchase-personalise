@@ -128,4 +128,8 @@ public:
 	/** Check is SteamOnlineSubsystem enabled */
 	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
 	static bool IsSteamEnabled();
+
+	/** Helper function to generate GUID */
+	UFUNCTION(BlueprintPure, Category = "GOSU|Tools")
+	static FString GenerateGUID();
 };

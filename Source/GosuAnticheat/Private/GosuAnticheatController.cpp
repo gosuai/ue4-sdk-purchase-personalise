@@ -170,6 +170,12 @@ void UGosuAnticheatController::CheckUserStatus(const FString& PlayerId, const FS
 
 void UGosuAnticheatController::FlushEvents()
 {
+	if (CustomEvents.Num() == 0)
+	{
+		// Do nothing if we haven't any events
+		return;
+	}
+
 	TSharedPtr<FJsonObject> RequestDataJson = MakeShareable(new FJsonObject);
 	RequestDataJson->SetArrayField(TEXT("events"), CustomEvents);
 	CustomEvents.Empty();

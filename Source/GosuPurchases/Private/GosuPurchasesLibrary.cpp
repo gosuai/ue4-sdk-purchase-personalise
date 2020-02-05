@@ -210,3 +210,8 @@ bool UGosuPurchasesLibrary::IsSteamEnabled()
 {
 	return IOnlineSubsystem::IsEnabled(STEAM_SUBSYSTEM);
 }
+
+FString UGosuPurchasesLibrary::GenerateGUID()
+{
+	return FGuid::NewGuid().ToString();
+}
