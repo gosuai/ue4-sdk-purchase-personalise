@@ -25,7 +25,7 @@
 
 #define LOCTEXT_NAMESPACE "FGosuAnticheatModule"
 
-const FString UGosuAnticheatController::GosuApiEndpoint(TEXT("https://stormy-depths-03783.herokuapp.com/api/v1"));
+const FString UGosuAnticheatController::GosuApiEndpoint(TEXT("https://stormy-depths-03783.herokuapp.com/api/v1/anticheat"));
 
 UGosuAnticheatController::UGosuAnticheatController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
